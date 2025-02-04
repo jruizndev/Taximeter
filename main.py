@@ -1,7 +1,18 @@
 import time
+import logging
+from datetime import datetime
+
+# Configuración del sistema de logs
+logging.basicConfig(
+    filename='logs/taximeter.log',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
 
 # Función que muestra el menú inicial
 def welcome_message():
+    logging.info("Programa iniciado")
     print("=== TAXÍMETRO DIGITAL ===")
     print("\nBienvenido al sistema de taxímetro digital.")
     print("Este programa permite calcular tarifas de viajes en taxi.\n")
@@ -20,6 +31,8 @@ def start_trip():
     last_state_change = start_time # Último cambio de estado
     accumulated_rate = 0 # Tarifa acumulada
     in_motion = False # Estado inicial: parado
+
+    logging.info("Nuevo trayecto iniciado")
 
     # Instrucciones para el taxista
     print("\n¡Trayecto iniciado!")
@@ -49,6 +62,7 @@ def start_trip():
             accumulated_rate += segment_rate # Actualiza la tarifa acumulada
             last_state_change = current_time # Actualiza el último cambio de estado
             in_motion = not in_motion # Cambia el estado del trayecto (movimiento/parado)
+            logging.info("Estado cambiado a %s", "movimiento" if in_motion else "parado")
 
 # Función principal del programa
 def main():
@@ -59,9 +73,11 @@ def main():
         if option == "1":
             start_trip()
         elif option == "2":
+            logging.info("Programa finalizado")
             print("\n¡Gracias por usar el taxímetro!")
             break
         else:
+            logging.warning(f"Opción inválida seleccionada: {option}")
             print("Opción no válida. Por favor, seleccione 1 o 2.")
 
 if __name__ == "__main__":
