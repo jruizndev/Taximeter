@@ -4,26 +4,24 @@ from datetime import datetime
 
 # Configuración del sistema de logs
 logging.basicConfig(
-    filename='logs/taximeter.log',
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
+   filename='logs/taximeter.log',
+   level=logging.INFO,
+   format='%(asctime)s - %(levelname)s - %(message)s',
+   datefmt='%Y-%m-%d %H:%M:%S'
 )
 
 # Función que muestra el menú inicial
 def welcome_message():
-    logging.info("Programa iniciado")
-    print("=== TAXÍMETRO DIGITAL ===")
-    print("\nBienvenido al sistema de taxímetro digital.")
-    print("Este programa permite calcular tarifas de viajes en taxi.\n")
-    print("Opciones disponibles:")
-    print("1. Iniciar nuevo trayecto")
-    print("2. Salir")
+   print("=== TAXÍMETRO DIGITAL ===")
+   print("\nBienvenido al sistema de taxímetro digital.")
+   print("Este programa permite calcular tarifas de viajes en taxi.\n")
+   print("Opciones disponibles:")
+   print("1. Iniciar nuevo trayecto")
+   print("2. Salir")
 
 # Función para calcular tarifa según el estado del trayecto
 def calculate_rate(elapsed_time, in_motion):
-    """Calcular tarifa según estado"""
-    return elapsed_time * (0.05 if in_motion else 0.02)
+   return elapsed_time * (0.05 if in_motion else 0.02)
 
 # Función para iniciar un nuevo trayecto
 def start_trip():
@@ -55,6 +53,7 @@ def start_trip():
         action = input("\nAcción ('m' para cambiar estado, 'f' para finalizar): ").lower()
         
         if action == 'f':
+            logging.info(f"Trayecto finalizado - Duración: {current_time - start_time:.1f}s - Tarifa: {total_rate:.2f}€")
             print(f"\nTrayecto finalizado")
             print(f"Tarifa total: {total_rate:.2f}€")
             break
@@ -62,10 +61,11 @@ def start_trip():
             accumulated_rate += segment_rate # Actualiza la tarifa acumulada
             last_state_change = current_time # Actualiza el último cambio de estado
             in_motion = not in_motion # Cambia el estado del trayecto (movimiento/parado)
-            logging.info("Estado cambiado a %s", "movimiento" if in_motion else "parado")
+            logging.info(f"Estado cambiado a {'movimiento' if in_motion else 'parado'}")
 
 # Función principal del programa
 def main():
+    logging.info("Programa iniciado")
     while True:
         welcome_message()
         option = input("\nSeleccione una opción (1-2): ")

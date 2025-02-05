@@ -4,3 +4,37 @@
 2025-02-04 22:53:48 - INFO - Estado cambiado a parado
 2025-02-04 22:53:52 - INFO - Programa iniciado
 2025-02-04 22:54:16 - INFO - Programa finalizado
+2025-02-05 18:48:55 - INFO - Programa iniciado
+2025-02-05 18:49:02 - INFO - Nuevo trayecto iniciado
+2025-02-05 18:49:09 - INFO - Estado cambiado a movimiento
+2025-02-05 18:49:17 - INFO - Estado cambiado a parado
+2025-02-05 18:49:19 - INFO - Estado cambiado a movimiento
+2025-02-05 18:49:20 - INFO - Estado cambiado a parado
+2025-02-05 18:49:21 - INFO - Estado cambiado a movimiento
+2025-02-05 18:49:23 - INFO - Trayecto finalizado - Duración: 19.1s - Tarifa: 0.69€
+2025-02-05 18:49:23 - INFO - Programa iniciado
+2025-02-05 18:49:26 - INFO - Programa finalizado
+2025-02-05 18:49:56 - INFO - Programa iniciado
+2025-02-05 18:50:02 - INFO - Nuevo trayecto iniciado
+2025-02-05 18:50:07 - INFO - Estado cambiado a movimiento
+2025-02-05 18:50:11 - INFO - Trayecto finalizado - Duración: 4.4s - Tarifa: 0.22€
+2025-02-05 18:50:11 - INFO - Programa iniciado
+2025-02-05 18:50:20 - INFO - Nuevo trayecto iniciado
+2025-02-05 18:50:30 - INFO - Trayecto finalizado - Duración: 8.2s - Tarifa: 0.16€
+2025-02-05 18:50:30 - INFO - Programa iniciado
+2025-02-05 18:50:31 - INFO - Programa finalizado
+2025-02-05 18:51:10 - INFO - Programa iniciado
+2025-02-05 18:51:13 - INFO - Nuevo trayecto iniciado
+2025-02-05 18:51:20 - INFO - Estado cambiado a movimiento
+2025-02-05 18:51:21 - INFO - Estado cambiado a parado
+2025-02-05 18:51:23 - INFO - Estado cambiado a movimiento
+2025-02-05 18:51:25 - INFO - Trayecto finalizado - Duración: 10.1s - Tarifa: 0.46€
+2025-02-05 18:51:25 - INFO - Programa iniciado
+2025-02-05 18:51:27 - INFO - Programa finalizado
+2025-02-05 18:56:30 - INFO - Programa iniciado
+2025-02-05 18:56:35 - WARNING - Opción inválida seleccionada: ç1
+2025-02-05 18:56:37 - INFO - Nuevo trayecto iniciado
+2025-02-05 18:56:42 - INFO - Estado cambiado a movimiento
+2025-02-05 18:56:45 - INFO - Estado cambiado a parado
+2025-02-05 18:56:46 - INFO - Trayecto finalizado - Duración: 7.9s - Tarifa: 0.29€
+2025-02-05 18:56:49 - INFO - Programa finalizado
