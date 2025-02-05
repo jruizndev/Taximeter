@@ -38,3 +38,10 @@
 2025-02-05 18:56:45 - INFO - Estado cambiado a parado
 2025-02-05 18:56:46 - INFO - Trayecto finalizado - Duración: 7.9s - Tarifa: 0.29€
 2025-02-05 18:56:49 - INFO - Programa finalizado
+2025-02-05 18:58:41 - INFO - Programa iniciado
+2025-02-05 18:58:43 - INFO - Nuevo trayecto iniciado
+2025-02-05 18:58:44 - INFO - Trayecto finalizado - Duración: 0.0s - Tarifa: 0.00€
+2025-02-05 18:58:51 - INFO - Nuevo trayecto iniciado
+2025-02-05 18:58:53 - INFO - Estado cambiado a movimiento
+2025-02-05 18:59:02 - INFO - Trayecto finalizado - Duración: 4.6s - Tarifa: 0.23€
+2025-02-05 18:59:14 - INFO - Programa finalizado
