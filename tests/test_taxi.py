@@ -31,3 +31,11 @@ class TestTaximeter(unittest.TestCase):
        first_rate = calculate_rate(10, False)
        second_rate = calculate_rate(10, True)
        self.assertEqual(first_rate + second_rate, expected_total)
+
+       # Test para comprobar la función de cálculo de tarfa en movimiento: tarifa normal
+   @patch('main.get_current_rate')
+   def test_calculate_rate_in_motion_normal(self, mock_get_rate):
+       mock_get_rate.return_value = TIME_SLOTS['normal']
+       expected_rate = 10 * TIME_SLOTS['normal']['motion_rate']  
+       rate = calculate_rate(10, True)
+       self.assertEqual(rate, expected_rate)
