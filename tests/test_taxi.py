@@ -47,3 +47,15 @@ class TestTaximeter(unittest.TestCase):
        expected_rate = 10 * TIME_SLOTS['normal']['stopped_rate'] 
        rate = calculate_rate(10, False)
        self.assertEqual(rate, expected_rate)
+    
+    # Test para probar el cálcu.lo de la tarifa total acumulada en un trayecto cambiado de estado: tarifa normal
+   @patch('main.get_current_rate')
+   def test_accumulated_rate_with_state_change_normal(self, mock_get_rate):
+       mock_get_rate.return_value = TIME_SLOTS['normal']
+       stopped = 10 * TIME_SLOTS['normal']['stopped_rate']  
+       in_motion = 10 * TIME_SLOTS['normal']['motion_rate']  
+       expected_total = stopped + in_motion   
+
+       first_rate = calculate_rate(10, False)
+       second_rate = calculate_rate(10, True)
+       self.assertEqual(first_rate + second_rate, expected_total)
