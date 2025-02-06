@@ -1,47 +1,6 @@
-2025-02-04 22:53:08 - INFO - Programa iniciado
-2025-02-04 22:53:23 - INFO - Nuevo trayecto iniciado
-2025-02-04 22:53:29 - INFO - Estado cambiado a movimiento
-2025-02-04 22:53:48 - INFO - Estado cambiado a parado
-2025-02-04 22:53:52 - INFO - Programa iniciado
-2025-02-04 22:54:16 - INFO - Programa finalizado
-2025-02-05 18:48:55 - INFO - Programa iniciado
-2025-02-05 18:49:02 - INFO - Nuevo trayecto iniciado
-2025-02-05 18:49:09 - INFO - Estado cambiado a movimiento
-2025-02-05 18:49:17 - INFO - Estado cambiado a parado
-2025-02-05 18:49:19 - INFO - Estado cambiado a movimiento
-2025-02-05 18:49:20 - INFO - Estado cambiado a parado
-2025-02-05 18:49:21 - INFO - Estado cambiado a movimiento
-2025-02-05 18:49:23 - INFO - Trayecto finalizado - Duración: 19.1s - Tarifa: 0.69€
-2025-02-05 18:49:23 - INFO - Programa iniciado
-2025-02-05 18:49:26 - INFO - Programa finalizado
-2025-02-05 18:49:56 - INFO - Programa iniciado
-2025-02-05 18:50:02 - INFO - Nuevo trayecto iniciado
-2025-02-05 18:50:07 - INFO - Estado cambiado a movimiento
-2025-02-05 18:50:11 - INFO - Trayecto finalizado - Duración: 4.4s - Tarifa: 0.22€
-2025-02-05 18:50:11 - INFO - Programa iniciado
-2025-02-05 18:50:20 - INFO - Nuevo trayecto iniciado
-2025-02-05 18:50:30 - INFO - Trayecto finalizado - Duración: 8.2s - Tarifa: 0.16€
-2025-02-05 18:50:30 - INFO - Programa iniciado
-2025-02-05 18:50:31 - INFO - Programa finalizado
-2025-02-05 18:51:10 - INFO - Programa iniciado
-2025-02-05 18:51:13 - INFO - Nuevo trayecto iniciado
-2025-02-05 18:51:20 - INFO - Estado cambiado a movimiento
-2025-02-05 18:51:21 - INFO - Estado cambiado a parado
-2025-02-05 18:51:23 - INFO - Estado cambiado a movimiento
-2025-02-05 18:51:25 - INFO - Trayecto finalizado - Duración: 10.1s - Tarifa: 0.46€
-2025-02-05 18:51:25 - INFO - Programa iniciado
-2025-02-05 18:51:27 - INFO - Programa finalizado
-2025-02-05 18:56:30 - INFO - Programa iniciado
-2025-02-05 18:56:35 - WARNING - Opción inválida seleccionada: ç1
-2025-02-05 18:56:37 - INFO - Nuevo trayecto iniciado
-2025-02-05 18:56:42 - INFO - Estado cambiado a movimiento
-2025-02-05 18:56:45 - INFO - Estado cambiado a parado
-2025-02-05 18:56:46 - INFO - Trayecto finalizado - Duración: 7.9s - Tarifa: 0.29€
-2025-02-05 18:56:49 - INFO - Programa finalizado
-2025-02-05 18:58:41 - INFO - Programa iniciado
-2025-02-05 18:58:43 - INFO - Nuevo trayecto iniciado
-2025-02-05 18:58:44 - INFO - Trayecto finalizado - Duración: 0.0s - Tarifa: 0.00€
-2025-02-05 18:58:51 - INFO - Nuevo trayecto iniciado
-2025-02-05 18:58:53 - INFO - Estado cambiado a movimiento
-2025-02-05 18:59:02 - INFO - Trayecto finalizado - Duración: 4.6s - Tarifa: 0.23€
-2025-02-05 18:59:14 - INFO - Programa finalizado
+06/02/2025 11:55:37 - INFO - Nuevo trayecto iniciado
+06/02/2025 11:55:46 - INFO - Estado cambiado a movimiento
+06/02/2025 11:55:48 - INFO - Estado cambiado a parado
+06/02/2025 11:55:49 - INFO - Estado cambiado a movimiento
+06/02/2025 11:55:51 - INFO - Trayecto finalizado - Duración: 11.4s - Tarifa: 0.53€
+06/02/2025 11:55:53 - INFO - Programa finalizado
