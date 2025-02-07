@@ -81,15 +81,15 @@ def manage_special_conditions():
    elif option == "4":
        return
 
-def calculate_rate(elapsed_time, in_motion):
-   current_rates = get_current_rate()
-   base_rate = current_rates['motion_rate'] if in_motion else current_rates['stopped_rate']
-   
-   multiplier = 1.0
-   if active_conditions:
-       multiplier = SPECIAL_CONDITIONS[active_conditions[0]]
-   
-   return elapsed_time * base_rate * multiplier
+def calculate_rate(elapsed_time, in_motion, special_condition=None):
+    current_rates = get_current_rate()
+    base_rate = current_rates['motion_rate'] if in_motion else current_rates['stopped_rate']
+    
+    # Aplicar multiplicador si hay condición especial
+    if special_condition and special_condition in SPECIAL_CONDITIONS:
+        base_rate *= SPECIAL_CONDITIONS[special_condition]
+    
+    return elapsed_time * base_rate
 
 def show_current_rates():
    current_rates = get_current_rate()

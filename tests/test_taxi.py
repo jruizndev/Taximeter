@@ -1,10 +1,10 @@
 import unittest
 from unittest.mock import patch
 from main import calculate_rate
-from config import TIME_SLOTS
+from config import TIME_SLOTS, SPECIAL_CONDITIONS
 
 class TestTaximeter(unittest.TestCase):
-    # Test para comprobar la función de cálculo de tarifa en movimiento: tarifa punta mañana
+   # Test para comprobar la función de cálculo de tarifa en movimiento: tarifa punta mañana
    @patch('main.get_current_rate')
    def test_calculate_rate_in_motion_morning(self, mock_get_rate):
        mock_get_rate.return_value = TIME_SLOTS['morning_rush']
@@ -12,7 +12,7 @@ class TestTaximeter(unittest.TestCase):
        rate = calculate_rate(10, True)
        self.assertEqual(rate, expected_rate)
 
-    # Test para comprobar la función de cálculo de tarifa en parado: tarifa punta mañana
+   # Test para comprobar la función de cálculo de tarifa en parado: tarifa punta mañana
    @patch('main.get_current_rate')
    def test_calculate_rate_stopped_morning(self, mock_get_rate):
        mock_get_rate.return_value = TIME_SLOTS['morning_rush']
@@ -20,7 +20,7 @@ class TestTaximeter(unittest.TestCase):
        rate = calculate_rate(10, False)
        self.assertEqual(rate, expected_rate)
 
-    # Test para probar el cálculo de la tarifa total acumulada en un trayecto cambiado de estado: tarifa punta mañana
+   # Test para probar el cálculo de la tarifa total acumulada en un trayecto cambiado de estado: tarifa punta mañana
    @patch('main.get_current_rate')
    def test_accumulated_rate_with_state_change_morning(self, mock_get_rate):
        mock_get_rate.return_value = TIME_SLOTS['morning_rush']
@@ -32,7 +32,7 @@ class TestTaximeter(unittest.TestCase):
        second_rate = calculate_rate(10, True)
        self.assertEqual(first_rate + second_rate, expected_total)
 
-    # Test para comprobar la función de cálculo de tarifa en movimiento: tarifa punta tarde
+   # Test para comprobar la función de cálculo de tarifa en movimiento: tarifa punta tarde
    @patch('main.get_current_rate')
    def test_calculate_rate_in_motion_evening(self, mock_get_rate):
        mock_get_rate.return_value = TIME_SLOTS['evening_rush']
@@ -40,7 +40,7 @@ class TestTaximeter(unittest.TestCase):
        rate = calculate_rate(10, True)
        self.assertEqual(rate, expected_rate)
 
-    # Test para comprobar la función de cálculo de tarifa en parado: tarifa punta tarde
+   # Test para comprobar la función de cálculo de tarifa en parado: tarifa punta tarde
    @patch('main.get_current_rate')
    def test_calculate_rate_stopped_evening(self, mock_get_rate):
        mock_get_rate.return_value = TIME_SLOTS['evening_rush']
@@ -48,7 +48,7 @@ class TestTaximeter(unittest.TestCase):
        rate = calculate_rate(10, False)
        self.assertEqual(rate, expected_rate)
 
-    # Test para probar el cálculo de la tarifa total acumulada en un trayecto cambiado de estado: tarifa punta tarde
+   # Test para probar el cálculo de la tarifa total acumulada en un trayecto cambiado de estado: tarifa punta tarde
    @patch('main.get_current_rate')
    def test_accumulated_rate_with_state_change_evening(self, mock_get_rate):
        mock_get_rate.return_value = TIME_SLOTS['evening_rush']
@@ -60,7 +60,7 @@ class TestTaximeter(unittest.TestCase):
        second_rate = calculate_rate(10, True)
        self.assertEqual(first_rate + second_rate, expected_total)
 
-    # Test para comprobar la función de cálculo de tarifa en movimiento: tarifa noche
+   # Test para comprobar la función de cálculo de tarifa en movimiento: tarifa noche
    @patch('main.get_current_rate')
    def test_calculate_rate_in_motion_night(self, mock_get_rate):
        mock_get_rate.return_value = TIME_SLOTS['night_life']
@@ -68,7 +68,7 @@ class TestTaximeter(unittest.TestCase):
        rate = calculate_rate(10, True)
        self.assertEqual(rate, expected_rate)
 
-    # Test para comprobar la función de cálculo de tarifa en parado: tarifa noche
+   # Test para comprobar la función de cálculo de tarifa en parado: tarifa noche
    @patch('main.get_current_rate')
    def test_calculate_rate_stopped_night(self, mock_get_rate):
        mock_get_rate.return_value = TIME_SLOTS['night_life']
@@ -76,7 +76,7 @@ class TestTaximeter(unittest.TestCase):
        rate = calculate_rate(10, False)
        self.assertEqual(rate, expected_rate)
 
-    # Test para probar el cálculo de la tarifa total acumulada en un trayecto cambiado de estado: tarifa noche
+   # Test para probar el cálculo de la tarifa total acumulada en un trayecto cambiado de estado: tarifa noche
    @patch('main.get_current_rate')
    def test_accumulated_rate_with_state_change_night(self, mock_get_rate):
        mock_get_rate.return_value = TIME_SLOTS['night_life']
@@ -116,23 +116,23 @@ class TestTaximeter(unittest.TestCase):
        second_rate = calculate_rate(10, True)
        self.assertEqual(first_rate + second_rate, expected_total)
 
-    # Test para comprobar la función de cálculo de tarifa en movimiento: tarifa normal
+   # Test para comprobar la función de cálculo de tarifa en movimiento: tarifa normal
    @patch('main.get_current_rate')
    def test_calculate_rate_in_motion_normal(self, mock_get_rate):
        mock_get_rate.return_value = TIME_SLOTS['normal']
        expected_rate = 10 * TIME_SLOTS['normal']['motion_rate']  
        rate = calculate_rate(10, True)
        self.assertEqual(rate, expected_rate)
-    
-    # Test para comprobar la función de cálculo de tarifa en parado: tarifa normal
+   
+   # Test para comprobar la función de cálculo de tarifa en parado: tarifa normal
    @patch('main.get_current_rate')
    def test_calculate_rate_stopped_normal(self, mock_get_rate):
        mock_get_rate.return_value = TIME_SLOTS['normal']
        expected_rate = 10 * TIME_SLOTS['normal']['stopped_rate'] 
        rate = calculate_rate(10, False)
        self.assertEqual(rate, expected_rate)
-    
-    # Test para probar el cálculo de la tarifa total acumulada en un trayecto cambiado de estado: tarifa normal
+   
+   # Test para probar el cálculo de la tarifa total acumulada en un trayecto cambiado de estado: tarifa normal
    @patch('main.get_current_rate')
    def test_accumulated_rate_with_state_change_normal(self, mock_get_rate):
        mock_get_rate.return_value = TIME_SLOTS['normal']
@@ -143,3 +143,11 @@ class TestTaximeter(unittest.TestCase):
        first_rate = calculate_rate(10, False)
        second_rate = calculate_rate(10, True)
        self.assertEqual(first_rate + second_rate, expected_total)
+
+   # Test para verificar multiplicador de tarifa en condición de lluvia
+   @patch('main.get_current_rate')
+   def test_calculate_rate_with_rain_condition(self, mock_get_rate):
+       mock_get_rate.return_value = TIME_SLOTS['normal']
+       expected_rate = 10 * TIME_SLOTS['normal']['motion_rate'] * SPECIAL_CONDITIONS['rain']
+       rate = calculate_rate(10, True, 'rain')
+       self.assertEqual(rate, expected_rate)
