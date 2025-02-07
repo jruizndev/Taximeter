@@ -16,7 +16,7 @@ TIME_SLOTS = {
     },
     'night_life': {
         'start': '00:00',
-        'end': '07:00',
+        'end': '03:00',
         'motion_rate': 0.07,
         'stopped_rate': 0.03,
         'description': 'Tarifa nocturna'
