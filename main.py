@@ -166,28 +166,27 @@ def show_trip_summary(duration, total_rate, movements, current_rates):
        print(f"- {start_time:.1f}s a {end_time:.1f}s: {state}")
    print(f"\nTarifa total: {total_rate:.2f}€")
 
-def manage_special_conditions():
-   global active_conditions
-   print("\n=== CONDICIONES ESPECIALES ===")
-   print("Condiciones activas:", active_conditions if active_conditions else "Ninguna")
-   print("\nSeleccione condición:")
-   print("1. Lluvia (+20%)")
-   print("2. Eventos (+30%)")
-   print("3. Desactivar todas")
-   print("4. Volver")
+def manage_special_conditions(taximeter):
+    print("\n=== CONDICIONES ESPECIALES ===")
+    print("Condiciones activas:", taximeter.active_conditions if taximeter.active_conditions else "Ninguna")
+    print("\nSeleccione condición:")
+    print("1. Lluvia (+20%)")
+    print("2. Eventos (+30%)")
+    print("3. Desactivar todas")
+    print("4. Volver")
 
-   option = input("\nOpción: ")
-   if option == "1":
-       active_conditions = ["rain"]
-       print("Activada tarifa por lluvia")
-   elif option == "2":
-       active_conditions = ["events"]
-       print("Activada tarifa por eventos")
-   elif option == "3":
-       active_conditions = []
-       print("Condiciones especiales desactivadas")
-   elif option == "4":
-       return
+    option = input("\nOpción: ")
+    if option == "1":
+        taximeter.active_conditions = ["rain"]
+        print("Activada tarifa por lluvia")
+    elif option == "2":
+        taximeter.active_conditions = ["events"]
+        print("Activada tarifa por eventos")
+    elif option == "3":
+        taximeter.active_conditions = []
+        print("Condiciones especiales desactivadas")
+    elif option == "4":
+        return
 
 def calculate_rate(elapsed_time, in_motion, special_condition=None):
     current_rates = get_current_rate()
@@ -298,9 +297,9 @@ def main():
        if option == "1":
            start_trip(taximeter)
        elif option == "2":
-           show_current_rates()
+           show_current_rates(taximeter)
        elif option == "3":
-           manage_special_conditions()
+           manage_special_conditions(taximeter)
        elif option == "4":
            logging.info("Programa finalizado")
            print("\n¡Gracias por usar el taxímetro!")
