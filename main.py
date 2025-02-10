@@ -40,39 +40,27 @@ class Taximeter:
 
 # Clase para gestionar viajes
 class Trip:
-    def __init__(self):
+    def __init__(self, rate_calculator):
         self.start_time = time.time()
         self.last_state_change = self.start_time
         self.accumulated_rate = 0
         self.in_motion = False
         self.movements = [(0, self.in_motion)]
-        self.current_rates = None
+        self.rate_calculator = rate_calculator
 
-    # Cambio de estado del taxímetro
     def toggle_motion(self):
+        """Cambia estado del taxi"""
         current_time = time.time()
         self.accumulated_rate += self.calculate_segment_rate()
         self.last_state_change = current_time
         self.in_motion = not self.in_motion
         self.movements.append((current_time - self.start_time, self.in_motion))
 
-    # Cálculo de la tarifa del segmento actual
-    def calulate_segment_rate(self):
+    def calculate_segment_rate(self):
+        """Calcula tarifa del segmento actual"""
         current_time = time.time()
         segment_time = current_time - self.last_state_change
-        return calculate_rate(segment_time, self.in_motion)
-
-    # Finalización del viaje y cálculo totales
-    def finalize(self):
-        current_time = time.time()
-        self.accumulated_rate += self.calculate_segment_rate()
-        trip_duration = current_time - self.start_time
-        self.movements.append((trip_duration, self.in_motion))
-        return {
-            'duration': trip_duration,
-            'total_rate': self.accumulated_rate,
-            'movements': self.movements
-        }
+        return self.rate_calculator.calculate_rate(segment_time, self.in_motion)
 
     # Obtener estado actual del viaje
     def get_current_status(self):
