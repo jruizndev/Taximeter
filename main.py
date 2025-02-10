@@ -148,23 +148,23 @@ def welcome_message():
    print("3. Gestionar condiciones especiales")
    print("4. Salir")
 
-def show_trip_summary(duration, total_rate, movements, current_rates):
-   print("\n=== RESUMEN DEL VIAJE ===")
-   print(f"Fecha: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}")
-   print(f"Duración: {duration:.1f}s")
-   print(f"Tarifa aplicada: {current_rates['description']}")
-   if active_conditions:
-       print(f"Condición especial: {active_conditions[0].capitalize()}")
-   print(f"\nDesglose de estados:")
-   for i in range(len(movements)):
-       start_time = movements[i][0]
-       state = "Movimiento" if movements[i][1] else "Parado"
-       if i < len(movements) - 1:
-           end_time = movements[i+1][0]
-       else:
-           end_time = movements[-1][0]
-       print(f"- {start_time:.1f}s a {end_time:.1f}s: {state}")
-   print(f"\nTarifa total: {total_rate:.2f}€")
+def show_trip_summary(trip_data, taximeter):
+    print("\n=== RESUMEN DEL VIAJE ===")
+    print(f"Fecha: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}")
+    print(f"Duración: {trip_data['duration']:.1f}s")
+    print(f"Tarifa aplicada: {trip_data['rate_info']['description']}")
+    if taximeter.active_conditions:
+        print(f"Condición especial: {taximeter.active_conditions[0].capitalize()}")
+    print(f"\nDesglose de estados:")
+    for i in range(len(trip_data['movements'])):
+        start_time = trip_data['movements'][i][0]
+        state = "Movimiento" if trip_data['movements'][i][1] else "Parado"
+        if i < len(trip_data['movements']) - 1:
+            end_time = trip_data['movements'][i+1][0]
+        else:
+            end_time = trip_data['movements'][-1][0]
+        print(f"- {start_time:.1f}s a {end_time:.1f}s: {state}")
+    print(f"\nTarifa total: {trip_data['total_rate']:.2f}€")
 
 def manage_special_conditions(taximeter):
     print("\n=== CONDICIONES ESPECIALES ===")
@@ -267,7 +267,7 @@ def start_trip(taximeter):
             trip_data = taximeter.end_trip()
             logging.info(f"Trayecto finalizado - Duración: {trip_data['duration']:.1f}s - Tarifa: {trip_data['total_rate']:.2f}€")
             save_trip_history(trip_data, taximeter)
-            show_trip_summary(trip_data['duration'], trip_data['total_rate'], trip_data['movements'], trip_data['rate_info'])
+            show_trip_summary(trip_data, taximeter)
             
             while True:
                 print("\nOpciones:")
