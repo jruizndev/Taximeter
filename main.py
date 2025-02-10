@@ -41,6 +41,28 @@ class Trip:
         segment_time = current_time - self.last_state_change
         return calculate_rate(segment_time, self.in_motion)
 
+    # Finalización del viaje y cálculo totales
+    def finalize(self):
+    current_time = time.time()
+    self.accumulated_rate += self.calculate_segment_rate()
+    trip_duration = current_time - self.start_time
+    self.movements.append((trip_duration, self.in_motion))
+    return {
+        'duration': trip_duration,
+        'total_rate': self.accumulated_rate,
+        'movements': self.movements
+    }
+
+    # Obtener estado actual del viaje
+    def get_current_status(self):
+        current_time = time.time()
+        return {
+            'state': 'Movimiento' if self.in_motion else 'Parado',
+            time: current_time - self.start_time
+            'rate': self.accumulated_rate + self.calculate_segment_rate(),
+        }
+
+
 # Variable global para condiciones especiales
 active_conditions = []
 
