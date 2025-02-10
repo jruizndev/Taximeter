@@ -240,76 +240,61 @@ def save_trip_history(duration, total_rate, movements):
        file.write(f"Tarifa total: {total_rate:.2f}€\n")
        file.write("-----------------------------------------\n")
 
-def start_trip():
-   start_time = time.time()
-   last_state_change = start_time
-   accumulated_rate = 0
-   in_motion = False
-   movements = [(0, in_motion)]
+def start_trip(taximeter):
+    taximeter.start_new_trip()
+    current_trip = taximeter.current_trip
+    
+    current_rates = current_trip.rate_calculator.get_current_rate()
+    condition_info = f" - {taximeter.active_conditions[0].capitalize()}" if taximeter.active_conditions else ""
+    logging.info(f"Nuevo trayecto iniciado - Tarifa: {current_rates['description']}{condition_info}")
 
-   current_rates = get_current_rate()
-   condition_info = f" - {active_conditions[0].capitalize()}" if active_conditions else ""
-   logging.info(f"Nuevo trayecto iniciado - Tarifa: {current_rates['description']}{condition_info}")
+    print("\n¡Trayecto iniciado!")
+    print(f"Tarifa actual: {current_rates['description']}{condition_info}")
+    print("Controles:")
+    print("'m' - cambiar movimiento/parado") 
+    print("'f' - finalizar trayecto")
 
-   print("\n¡Trayecto iniciado!")
-   print(f"Tarifa actual: {current_rates['description']}{condition_info}")
-   print("Controles:")
-   print("'m' - cambiar movimiento/parado") 
-   print("'f' - finalizar trayecto")
-
-   while True:
-       current_time = time.time()
-       segment_time = current_time - last_state_change
-       segment_rate = calculate_rate(segment_time, in_motion)
-       accumulated_rate += segment_rate
-       
-       print(f"\rEstado: {'Movimiento' if in_motion else 'Parado'} | "
-             f"Tiempo: {current_time - start_time:.1f}s | "
-             f"Tarifa: {accumulated_rate:.2f}€", end="", flush=True)
-       
-       action = input("\nAcción ('m' para cambiar estado, 'f' para finalizar): ").lower()
-       
-       if action == 'f':
-           current_time = time.time()
-           segment_time = current_time - last_state_change
-           segment_rate = calculate_rate(segment_time, in_motion)
-           accumulated_rate += segment_rate
-           
-           trip_duration = current_time - start_time
-           movements.append((trip_duration, in_motion))
-           total_rate = accumulated_rate
-           logging.info(f"Trayecto finalizado - Duración: {trip_duration:.1f}s - Tarifa: {total_rate:.2f}€")
-           save_trip_history(trip_duration, total_rate, movements)
-   
-           show_trip_summary(trip_duration, total_rate, movements, current_rates)
-           
-           while True:
-               print("\nOpciones:")
-               print("1. Iniciar nuevo trayecto")
-               print("2. Volver al menú principal")
-               
-               option = input("\nSeleccione una opción: ")
-               if option == "1":
-                   return start_trip()
-               elif option == "2":
-                   return
-               else:
-                   print("Opción no válida. Por favor, seleccione 1 o 2")
-           
-       elif action == 'm':
-           last_state_change = current_time
-           in_motion = not in_motion
-           movements.append((current_time - start_time, in_motion))
-           logging.info(f"Estado cambiado a {'movimiento' if in_motion else 'parado'}")
+    while True:
+        current_status = current_trip.get_current_status()
+        
+        print(f"\rEstado: {'Movimiento' if current_status['state'] == 'Movimiento' else 'Parado'} | "
+                f"Tiempo: {current_status['time']:.1f}s | "
+                f"Tarifa: {current_status['rate']:.2f}€", end="", flush=True)
+        
+        action = input("\nAcción ('m' para cambiar estado, 'f' para finalizar): ").lower()
+        
+        if action == 'f':
+            trip_data = taximeter.end_trip()
+            logging.info(f"Trayecto finalizado - Duración: {trip_data['duration']:.1f}s - Tarifa: {trip_data['total_rate']:.2f}€")
+            save_trip_history(trip_data['duration'], trip_data['total_rate'], trip_data['movements'])
+            show_trip_summary(trip_data['duration'], trip_data['total_rate'], trip_data['movements'], trip_data['rate_info'])
+            
+            while True:
+                print("\nOpciones:")
+                print("1. Iniciar nuevo trayecto")
+                print("2. Volver al menú principal")
+                
+                option = input("\nSeleccione una opción: ")
+                if option == "1":
+                    return start_trip(taximeter)
+                elif option == "2":
+                    return
+                else:
+                    print("Opción no válida. Por favor, seleccione 1 o 2")
+            
+        elif action == 'm':
+            taximeter.toggle_motion()
+            logging.info(f"Estado cambiado a {'movimiento' if current_trip.in_motion else 'parado'}")
 
 def main():
    logging.info("Programa iniciado")
+   taximeter = Taximeter() 
    while True:
        welcome_message()
        option = input("\nSeleccione una opción (1-4): ")
        
        if option == "1":
-           start_trip()
+           start_trip(taximeter)
        elif option == "2":
            show_current_rates()
        elif option == "3":
