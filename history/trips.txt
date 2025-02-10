@@ -1,0 +1,33 @@
+VIAJE 10/02/2025 20:08:34
+Tarifa aplicada: Tarifa normal (resto de horas)
+Condición especial: Events
+Duración: 12.3s
+Estados:
+- 0.0s a 0.0s: Parado
+- 0.0s a 3.3s: Movimiento
+- 3.3s a 12.3s: Parado
+- 12.3s a 12.3s: Parado
+Tarifa total: 0.38€
+-----------------------------------------
+VIAJE 10/02/2025 21:51:54
+Tarifa aplicada: Tarifa normal (resto de horas)
+Duración: 10.5s
+Estados:
+- 0.0s a 3.7s: Parado
+- 3.7s a 8.2s: Movimiento
+- 8.2s a 10.5s: Parado
+- 10.5s a 10.5s: Parado
+Tarifa total: 0.30€
+-----------------------------------------
+VIAJE 10/02/2025 21:57:59
+Tarifa aplicada: Tarifa normal (resto de horas)
+Condición especial: Events
+Duración: 9.2s
+Estados:
+- 0.0s a 2.3s: Parado
+- 2.3s a 3.7s: Movimiento
+- 3.7s a 5.9s: Parado
+- 5.9s a 9.2s: Movimiento
+- 9.2s a 9.2s: Movimiento
+Tarifa total: 0.28€
+-----------------------------------------

@@ -199,20 +199,21 @@ def calculate_rate(elapsed_time, in_motion, special_condition=None):
     
     return elapsed_time * base_rate
 
-def show_current_rates():
-   current_rates = get_current_rate()
-   print("\n=== TARIFAS DEL TAXÍMETRO ===")
-   print("\nTARIFA ACTUAL:")
-   print(f"► {current_rates['description']}")
-   print(f"  - En movimiento: {current_rates['motion_rate']}€/s")
-   print(f"  - Parado: {current_rates['stopped_rate']}€/s")
+def show_current_rates(taximeter):
+    current_rates = taximeter.rate_calculator.get_current_rate()
+    print("\n=== TARIFAS DEL TAXÍMETRO ===")
+    print("\nTARIFA ACTUAL:")
+    print(f"► {current_rates['description']}")
+    print(f"  - En movimiento: {current_rates['motion_rate']}€/s")
+    print(f"  - Parado: {current_rates['stopped_rate']}€/s")
 
-   if active_conditions:
-       condition = active_conditions[0]
-       multiplier = SPECIAL_CONDITIONS[condition]
-       print(f"\nCondición especial activa: {condition.capitalize()} (+{(multiplier-1)*100}%)")
-   
-   input("\nPresione Enter para continuar...")
+    if taximeter.active_conditions:
+        condition = taximeter.active_conditions[0]
+        multiplier = SPECIAL_CONDITIONS[condition]
+        print(f"\nCondición especial activa: {condition.capitalize()} (+{(multiplier-1)*100}%)")
+    
+    input("\nPresione Enter para continuar...")
+
 
 def save_trip_history(duration, total_rate, movements):
    timestamp = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -278,6 +279,7 @@ def start_trip(taximeter):
                 if option == "1":
                     return start_trip(taximeter)
                 elif option == "2":
+                    show_current_rates(taximeter)
                     return
                 else:
                     print("Opción no válida. Por favor, seleccione 1 o 2")
