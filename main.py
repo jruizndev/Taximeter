@@ -214,31 +214,31 @@ def show_current_rates(taximeter):
     input("\nPresione Enter para continuar...")
 
 
-def save_trip_history(duration, total_rate, movements):
-   timestamp = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-   current_rates = get_current_rate()
-   
-   with open('history/trips.txt', 'a') as file:
-       file.write(f"VIAJE {timestamp}\n")
-       file.write(f"Tarifa aplicada: {current_rates['description']}\n")
-       if active_conditions:
-           file.write(f"Condición especial: {active_conditions[0].capitalize()}\n")
-       file.write(f"Duración: {duration:.1f}s\n")
-       file.write("Estados:\n")
-       
-       for i in range(len(movements)):
-           start_time = movements[i][0]
-           state = "Movimiento" if movements[i][1] else "Parado"
-           
-           if i < len(movements) - 1:
-               end_time = movements[i+1][0]
-           else:
-               end_time = duration
-               
-           file.write(f"- {start_time:.1f}s a {end_time:.1f}s: {state}\n")
-           
-       file.write(f"Tarifa total: {total_rate:.2f}€\n")
-       file.write("-----------------------------------------\n")
+def save_trip_history(trip_data, taximeter):
+    timestamp = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    current_rates = trip_data['rate_info']
+    
+    with open('history/trips.txt', 'a') as file:
+        file.write(f"VIAJE {timestamp}\n")
+        file.write(f"Tarifa aplicada: {current_rates['description']}\n")
+        if taximeter.active_conditions:
+            file.write(f"Condición especial: {taximeter.active_conditions[0].capitalize()}\n")
+        file.write(f"Duración: {trip_data['duration']:.1f}s\n")
+        file.write("Estados:\n")
+        
+        for i in range(len(trip_data['movements'])):
+            start_time = trip_data['movements'][i][0]
+            state = "Movimiento" if trip_data['movements'][i][1] else "Parado"
+            
+            if i < len(trip_data['movements']) - 1:
+                end_time = trip_data['movements'][i+1][0]
+            else:
+                end_time = trip_data['duration']
+                
+            file.write(f"- {start_time:.1f}s a {end_time:.1f}s: {state}\n")
+            
+        file.write(f"Tarifa total: {trip_data['total_rate']:.2f}€\n")
+        file.write("-----------------------------------------\n")
 
 def start_trip(taximeter):
     taximeter.start_new_trip()
@@ -266,7 +266,7 @@ def start_trip(taximeter):
         if action == 'f':
             trip_data = taximeter.end_trip()
             logging.info(f"Trayecto finalizado - Duración: {trip_data['duration']:.1f}s - Tarifa: {trip_data['total_rate']:.2f}€")
-            save_trip_history(trip_data['duration'], trip_data['total_rate'], trip_data['movements'])
+            save_trip_history(trip_data, taximeter)
             show_trip_summary(trip_data['duration'], trip_data['total_rate'], trip_data['movements'], trip_data['rate_info'])
             
             while True:
