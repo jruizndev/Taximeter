@@ -3,6 +3,19 @@ import logging
 from datetime import datetime
 from config import TIME_SLOTS, SPECIAL_CONDITIONS
 
+class Taximeter:
+    def __init__(self):
+        self.active_conditions = []
+        self.initialize_logging()
+
+        def initialize_logging(self):
+            logging.basicConfig(
+                filename='logs/taximeter.log',
+                level=logging.INFO,
+                format='%(asctime)s - %(levelname)s - %(message)s',
+                datefmt='%d/%m/%Y %H:%M:%S'
+            )
+
 # Variable global para condiciones especiales
 active_conditions = []
 
