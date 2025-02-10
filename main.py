@@ -3,6 +3,7 @@ import logging
 from datetime import datetime
 from config import TIME_SLOTS, SPECIAL_CONDITIONS
 
+# Clase principal del taxímetro
 class Taximeter:
     def __init__(self):
         self.active_conditions = []
@@ -15,6 +16,16 @@ class Taximeter:
                 format='%(asctime)s - %(levelname)s - %(message)s',
                 datefmt='%d/%m/%Y %H:%M:%S'
             )
+
+# Clase para gestionar viajes
+class Trip:
+    def __init__(self):
+        self.start_time = time.time()
+        self.last_state_change = self.start_time
+        self.accumulated_rate = 0
+        self.in_motion = False
+        self.movements = [(0, self.in_motion)]
+        self.current_rates = None
 
 # Variable global para condiciones especiales
 active_conditions = []
