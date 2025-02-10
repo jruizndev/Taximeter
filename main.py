@@ -27,6 +27,20 @@ class Trip:
         self.movements = [(0, self.in_motion)]
         self.current_rates = None
 
+    # Cambio de estado del taxímetro
+    def toggle_motion(self):
+        current_time = time.time()
+        self.accumulated_rate += self.calculate_segment_rate()
+        self.last_state_change = current_time
+        self.in_motion = not self.in_motion
+        self.movements.append((current_time - self.start_time, self.in_motion))
+
+    # Cálculo de la tarifa del segmento actual
+    def calulate_segment_rate(self):
+        current_time = time.time()
+        segment_time = current_time - self.last_state_change
+        return calculate_rate(segment_time, self.in_motion)
+
 # Variable global para condiciones especiales
 active_conditions = []
 
