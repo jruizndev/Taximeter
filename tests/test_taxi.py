@@ -105,8 +105,7 @@ class TestTaximeter(unittest.TestCase):
             expected_total = first_rate + second_rate
             self.assertEqual(first_rate + second_rate, expected_total)
 
-   # Test para comprobar la función de cálculo de tarifa en movimiento: tarifa valle
-
+   # Validación función de cálculo de tarifa en movimiento: tarifa valle
     def test_calculate_rate_in_motion_low(self):
        with patch.object(RateCalculator, 'get_current_rate', return_value=TIME_SLOTS['low_demand']):
             self.trip.in_motion = True
@@ -116,13 +115,15 @@ class TestTaximeter(unittest.TestCase):
             expected_rate = 10 * TIME_SLOTS['low_demand']['motion_rate']
             self.assertEqual(rate, expected_rate)
 
-   # Test para comprobar la función de cálculo de tarifa en parado: tarifa valle
-    @patch('main.get_current_rate')
-    def test_calculate_rate_stopped_low(self, mock_get_rate):
-       mock_get_rate.return_value = TIME_SLOTS['low_demand']
-       expected_rate = 10 * TIME_SLOTS['low_demand']['stopped_rate'] 
-       rate = calculate_rate(10, False)
-       self.assertEqual(rate, expected_rate)
+   # Validacion función de cálculo de tarifa en parado: tarifa valle
+    def test_calculate_rate_stopped_low(self):
+       with patch.object(RateCalculator, 'get_current_rate', return_value=TIME_SLOTS['low_demand']):
+            self.trip.in_motion = False
+            segment_time = 10  
+            rate = self.trip.rate_calculator.calculate_rate(segment_time, self.trip.in_motion)
+
+            expected_rate = 10 * TIME_SLOTS['low_demand']['stopped_rate']
+            self.assertEqual(rate, expected_rate)
 
    # Test para probar el cálculo de la tarifa total acumulada en un trayecto cambiado de estado: tarifa valle
     @patch('main.get_current_rate')
