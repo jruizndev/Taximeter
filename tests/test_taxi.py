@@ -169,12 +169,13 @@ class TestTaximeter(unittest.TestCase):
             expected_total = first_rate + second_rate
             self.assertEqual(first_rate + second_rate, expected_total)
 
-   # Test para verificar multiplicador de tarifa en condición de lluvia
-    @patch('main.get_current_rate')
-    def test_calculate_rate_with_rain_condition(self, mock_get_rate):
-       mock_get_rate.return_value = TIME_SLOTS['normal']
+   # Validación multiplicador de tarifa en condición de lluvia
+    def test_calculate_rate_with_rain_condition(self):
+       with patch.object(RateCalculator, 'get_current_rate', return_value = TIME_SLOTS['normal']):
+        segment_time = 10
+        rate = self.trip.rate_calculator.calculate_rate(segment_time, True, 'rain')
+
        expected_rate = 10 * TIME_SLOTS['normal']['motion_rate'] * SPECIAL_CONDITIONS['rain']
-       rate = calculate_rate(10, True, 'rain')
        self.assertEqual(rate, expected_rate)
 
     # Test para verificar multiplicador de tarifa en eventos
