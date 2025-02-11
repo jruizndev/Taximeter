@@ -8,7 +8,7 @@ class TestTaximeter(unittest.TestCase):
         self.taximeter = Taximeter()
         self.trip = Trip(self.taximeter.rate_calculator)
 
-    # Validar función de cálculo de tarifa en movimiento: tarifa punta mañana
+    # Validación función de cálculo de tarifa en movimiento: tarifa punta mañana
     def test_calculate_rate_in_motion_morning(self):
         with patch.object(RateCalculator, 'get_current_rate', return_value=TIME_SLOTS['morning_rush']):
             self.trip.in_motion = True
@@ -19,7 +19,7 @@ class TestTaximeter(unittest.TestCase):
             self.assertEqual(rate, expected_rate)
       
 
-   # Validarfunción de cálculo de tarifa en parado: tarifa punta mañana
+   # Validación función de cálculo de tarifa en parado: tarifa punta mañana
     def test_calculate_rate_stopped_morning(self):
        with patch.object(RateCalculator, 'get_current_rate', return_value=TIME_SLOTS['morning_rush']):
             self.trip.in_motion = False
@@ -41,13 +41,15 @@ class TestTaximeter(unittest.TestCase):
             expected_total = first_rate + second_rate
             self.assertEqual(first_rate + second_rate, expected_total)
 
-   # Test para comprobar la función de cálculo de tarifa en movimiento: tarifa punta tarde
-    @patch('main.get_current_rate')
-    def test_calculate_rate_in_motion_evening(self, mock_get_rate):
-       mock_get_rate.return_value = TIME_SLOTS['evening_rush']
-       expected_rate = 10 * TIME_SLOTS['evening_rush']['motion_rate']  
-       rate = calculate_rate(10, True)
-       self.assertEqual(rate, expected_rate)
+   # Validación función de cálculo de tarifa en movimiento: tarifa punta tarde
+    def test_calculate_rate_in_motion_evening(self):
+        with patch.object(RateCalculator, 'get_current_rate', return_value=TIME_SLOTS['evening_rush']):
+            self.trip.in_motion = True
+            segment_time = 10  
+            rate = self.trip.rate_calculator.calculate_rate(segment_time, self.trip.in_motion)
+
+            expected_rate = 10 * TIME_SLOTS['evening_rush']['motion_rate']
+            self.assertEqual(rate, expected_rate)
 
    # Test para comprobar la función de cálculo de tarifa en parado: tarifa punta tarde
     @patch('main.get_current_rate')
