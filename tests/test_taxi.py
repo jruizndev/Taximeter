@@ -51,13 +51,15 @@ class TestTaximeter(unittest.TestCase):
             expected_rate = 10 * TIME_SLOTS['evening_rush']['motion_rate']
             self.assertEqual(rate, expected_rate)
 
-   # Test para comprobar la función de cálculo de tarifa en parado: tarifa punta tarde
-    @patch('main.get_current_rate')
-    def test_calculate_rate_stopped_evening(self, mock_get_rate):
-       mock_get_rate.return_value = TIME_SLOTS['evening_rush']
-       expected_rate = 10 * TIME_SLOTS['evening_rush']['stopped_rate'] 
-       rate = calculate_rate(10, False)
-       self.assertEqual(rate, expected_rate)
+   # Validación función de cálculo de tarifa en parado: tarifa punta tarde
+    def test_calculate_rate_stopped_evening(self):
+       with patch.object(RateCalculator, 'get_current_rate', return_value=TIME_SLOTS['evening_rush']):
+            self.trip.in_motion = False
+            segment_time = 10  
+            rate = self.trip.rate_calculator.calculate_rate(segment_time, self.trip.in_motion)
+
+            expected_rate = 10 * TIME_SLOTS['evening_rush']['stopped_rate']
+            self.assertEqual(rate, expected_rate)
 
    # Test para probar el cálculo de la tarifa total acumulada en un trayecto cambiado de estado: tarifa punta tarde
     @patch('main.get_current_rate')
