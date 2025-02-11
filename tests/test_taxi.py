@@ -106,12 +106,15 @@ class TestTaximeter(unittest.TestCase):
             self.assertEqual(first_rate + second_rate, expected_total)
 
    # Test para comprobar la función de cálculo de tarifa en movimiento: tarifa valle
-    @patch('main.get_current_rate')
-    def test_calculate_rate_in_motion_low(self, mock_get_rate):
-       mock_get_rate.return_value = TIME_SLOTS['low_demand']
-       expected_rate = 10 * TIME_SLOTS['low_demand']['motion_rate']  
-       rate = calculate_rate(10, True)
-       self.assertEqual(rate, expected_rate)
+
+    def test_calculate_rate_in_motion_low(self):
+       with patch.object(RateCalculator, 'get_current_rate', return_value=TIME_SLOTS['low_demand']):
+            self.trip.in_motion = True
+            segment_time = 10  
+            rate = self.trip.rate_calculator.calculate_rate(segment_time, self.trip.in_motion)
+
+            expected_rate = 10 * TIME_SLOTS['low_demand']['motion_rate']
+            self.assertEqual(rate, expected_rate)
 
    # Test para comprobar la función de cálculo de tarifa en parado: tarifa valle
     @patch('main.get_current_rate')
