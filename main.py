@@ -2,6 +2,7 @@ import time
 import logging
 from datetime import datetime
 from config import TIME_SLOTS, SPECIAL_CONDITIONS
+from auth.auth import Auth
 
 # Clase principal del taxímetro
 class Taximeter:
@@ -10,7 +11,7 @@ class Taximeter:
        self.current_trip = None
        self.rate_calculator = RateCalculator()
        self.initialize_logging()
-    
+       
     # Configuración del sistema de logs
    def initialize_logging(self):
        logging.basicConfig(
@@ -115,6 +116,61 @@ class RateCalculator:
 class TaxiUI:
     def __init__(self, taximeter):
         self.taximeter = taximeter
+        self.auth = Auth()
+        self.current_user = None
+    
+    def show_auth_menu(self):
+        print("\nPepe Taxi")
+        print("Bienvenido al sistema de taxímetro digital.")
+        print("1. Iniciar sesión")
+        print("2. Registrarse")
+        print("3. Salir")
+
+        while True:
+            option = input("\nSeleccione una opción (1-3): ")
+            if option == "1":
+                self.handle_login()
+                break
+            elif option == "2":
+                    self.handle_register()
+            elif option == "3":
+                    print("\n¡Hasta pronto!")
+                    exit()
+            else:
+                    print("Opción no válida. Por favor, seleccione 1-3")
+
+        # Iniciar sesión
+    def handle_login(self):
+            print("\nIniciar sesión")
+            username = input("Usuario: ")
+            password = input("Contraseña: ")
+
+            success, result = self.auth.login(username, password)
+            if success:
+                self.current_user = result
+                print(f"\n¡Bienvenido, {username}!")
+                return True
+            else:
+                print(f"Error: {result}")
+                return False
+
+        # Registrarse
+    def handle_register(self):
+            print("\nRegistraro de nuevo Usuario")
+            username = input("Usuario: ")
+            password = input("Contraseña: ")
+            password_confirm = input("Confirmar contraseña: ")
+            
+            if password != password_confirm:
+                print("Las contraseñas no coinciden")
+                return False
+            
+            success, message = self.auth.register_user(username, password)
+            if success:
+                print(f"\n¡{username} registrado!")
+            else:
+                print(f"Error: {message}")
+        
 
     def show_welcome_message(self):
         print("Pepe Taxi")
@@ -259,26 +315,33 @@ class TaxiUI:
            file.write("-----------------------------------------\n")
 
 def main():
-   logging.info("Programa iniciado")
-   taximeter = Taximeter()
-   ui = TaxiUI(taximeter) 
-   while True:
-       ui.show_welcome_message()
-       option = input("\nSeleccione una opción (1-4): ")
-       
-       if option == "1":
-           ui.handle_trip()
-       elif option == "2":
-           ui.show_current_rates()
-       elif option == "3":
-           ui.manage_special_conditions()
-       elif option == "4":
-           logging.info("Programa finalizado")
-           print("\n¡Gracias por usar el taxímetro!")
-           break
-       else:
-           logging.warning(f"Opción inválida seleccionada: {option}")
-           print("Opción no válida. Por favor, seleccione 1-4")
+    logging.info("Programa iniciado")
+    taximeter = Taximeter()
+    ui = TaxiUI(taximeter)
+
+    # Mostrar menú de autenticación hasta que el usuario inicie sesión
+    while not ui.current_user:
+        ui.show_auth_menu()
+        
+    # Una vez autenticado, mostrar el menú principal
+    while True:
+        ui.show_welcome_message()
+        option = input("\nSeleccione una opción (1-4): ")
+        
+        if option == "1":
+            ui.handle_trip()
+        elif option == "2":
+            ui.show_current_rates()
+        elif option == "3":
+            ui.manage_special_conditions()
+        elif option == "4":
+            logging.info("Programa finalizado")
+            print("\n¡Gracias por usar el taxímetro!")
+            ui.auth.db.disconnect()  
+            break
+        else:
+            logging.warning(f"Opción inválida seleccionada: {option}")
+            print("Opción no válida. Por favor, seleccione 1-4")
 
 if __name__ == "__main__":
    main()
