@@ -8,6 +8,7 @@ class TaxiMeterGUI:
         # Crear la ventana principal
         self.root = tk.Tk()
         self.root.title("Pepe Taxi")
+        self.active_condition = None # Variable para almacenar la condición activa
         
         # Configurar el tamaño de la ventana
         self.root.geometry("800x600")
@@ -348,7 +349,77 @@ class TaxiMeterGUI:
 
     # Gestionar condiciones especiales
     def manage_special_conditions(self):
-        messagebox.showinfo("Info", "Gestionando condiciones especiales...")
+        # Crear una nueva ventana para gestionar condiciones especiales
+        conditions_window = tk.Toplevel(self.root)
+        conditions_window.title("Gestionar Condiciones Especiales")
+        conditions_window.geometry("400x300")
+
+        # Frame principal
+        main_frame = ttk.Frame(conditions_window, padding="20")
+        main_frame.pack(expand=True, fill="both")
+
+        # Título
+        title_label = ttk.Label(
+            main_frame,
+            text="Gestionar Condiciones Especiales",
+            font=("Helvetica", 16, "bold")
+        )
+        title_label.pack(pady=(0, 20))
+
+        # Variable para rastrear la selección
+        selected_condition = tk.StringVar(value=self.active_condition if self.active_condition else "none")
+
+        # Frame para las opciones
+        options_frame = ttk.Frame(main_frame)
+        options_frame.pack(fill="both", expand=True)
+
+        # Opción: Sin condiciones especiales
+        ttk.Radiobutton(
+            options_frame,
+            text="Sin condiciones especiales",
+            value="none",
+            variable=selected_condition
+        ) .pack(pady=5, anchor="w")
+
+        # Opciones para cada condición especial
+        for condition, multiplier in SPECIAL_CONDITIONS.items():
+            condition_name = "Lluvia" if condition == "rain" else "Eventos especiales"
+            ttk.Radiobutton(
+                options_frame,
+                text=f"{condition_name} (x{multiplier})",
+                value=condition,
+                variable=selected_condition
+            ).pack(pady=5, anchor="w")
+
+        # Frame para los botones
+        button_frame = ttk.Frame(main_frame)
+        button_frame.pack(pady=20)
+
+        def apply_conditions():
+            selected = selected_condition.get()
+            self.active_condition = None if selected == "none" else selected
+            conditions_window.destroy()
+            messagebox.showinfo(
+                "Éxito",
+                "Condiciones especiales aplicadas correctamente" if self.active_condition else "Condiciones especiales desactivadas"
+            )
+
+        # Botones
+        apply_button = ttk.Button(
+            button_frame,
+            text="Aplicar",
+            command=apply_conditions,
+            width= 15
+        )
+        apply_button.pack(side=tk.LEFT, padx=5)
+
+        cancel_button = ttk.Button(
+            button_frame,
+            text="Cancelar",
+            command=conditions_window.destroy,
+            width= 15
+        )
+        cancel_button.pack(side=tk.LEFT, padx=5)
 
     def run(self):
         # Iniciar el bucle principal de la interfaz
