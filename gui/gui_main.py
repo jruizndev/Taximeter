@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from auth.auth import Auth
 from config.config import TIME_SLOTS, SPECIAL_CONDITIONS
+import time
 
 class TaxiMeterGUI:
     def __init__(self):
@@ -261,7 +262,114 @@ class TaxiMeterGUI:
 
     # Iniciar un nuevo trayecto
     def start_new_trip(self):
-        messagebox.showinfo("Info", "Iniciando nuevo trayecto...")
+        # Crear una nueva ventana para el viaje
+        trip_window = tk.Toplevel(self.root)
+        trip_window.title("Nuevo Trayecto")
+        trip_window.geometry("500x400")
+
+        # Variables de control
+        self.is_moving = False
+        self.start_time = time.time()
+        self.accumulated_fare = 0.0
+        self.last_update = self.start_time
+
+        # Frame principal
+        main_frame = ttk.Frame(trip_window, padding="20")
+        main_frame.pack(expand=True, fill="both")
+
+        # Título
+        title_label = ttk.Label(
+            main_frame,
+            text="Trayecto en Curso",
+            font=("Helvetica", 16, "bold")
+        )
+        title_label.pack(pady=(0, 20))
+
+        # Frame para la información
+        info_frame = ttk.Frame(main_frame)
+        info_frame.pack(fill="both", expand=True)
+
+        # Labels para mostrar información
+        state_var = tk.StringVar(value="PARADO")
+        time_var = tk.StringVar(value="0:00")
+        fare_var = tk.StringVar(value="0.00€")
+
+        # Estado actual
+        ttk.Label(info_frame, text="Estado:", font=("Helvetica", 12)).pack(pady=5)
+        ttk.Label(info_frame, textvariable=state_var, font=("Helvetica", 14, "bold")).pack(pady=5)
+
+        # Tiempo transcurrido
+        ttk.Label(info_frame, text="Tiempo:", font=("Helvetica", 12)).pack(pady=5)
+        ttk.Label(info_frame, textvariable=time_var, font=("Helvetica", 14, "bold")).pack(pady=5)
+
+        # Tarifa acumulada
+        ttk.Label(info_frame, text="Tarifa:", font=("Helvetica", 12)).pack(pady=5)
+        ttk.Label(info_frame, textvariable=fare_var, font=("Helvetica", 14, "bold")).pack(pady=5)
+
+        # Frame para los botones
+        button_frame = ttk.Frame(main_frame)
+        button_frame.pack(pady=20)
+
+        def toggle_movement():
+            self.is_moving = not self.is_moving
+            state_var.set("EN MOVIMIENTO" if self.is_moving else "PARADO")
+            toggle_button.configure(text="Parar" if self.is_moving else "Iniciar Movimiento")
+
+        def update_display():
+            if not hasattr(self, 'start_time'):  # Si la ventana se ha cerrado
+                return
+        
+            current_time = time.time()
+            elapsed = current_time - self.start_time
+        
+            # Actualizar tiempo
+            minutes = int(elapsed // 60)
+            seconds = int(elapsed % 60)
+            time_var.set(f"{minutes}:{seconds:02d}")
+        
+            # Calcular tarifa
+            rate = TIME_SLOTS['normal']  # Por ahora usamos tarifa normal
+            rate_multiplier = 1.0
+        
+            if self.active_condition:
+                rate_multiplier = SPECIAL_CONDITIONS[self.active_condition]
+        
+            current_rate = rate['motion_rate'] if self.is_moving else rate['stopped_rate']
+            time_diff = current_time - self.last_update
+            self.accumulated_fare += (current_rate * rate_multiplier * time_diff)
+        
+            fare_var.set(f"{self.accumulated_fare:.2f}€")
+            self.last_update = current_time
+        
+            # Programar próxima actualización
+            trip_window.after(1000, update_display)
+
+        def end_trip():
+            if messagebox.askyesno("Finalizar Trayecto", "¿Desea finalizar el trayecto actual?"):
+                trip_window.destroy()
+                messagebox.showinfo("Trayecto Finalizado", 
+                                f"Tarifa final: {self.accumulated_fare:.2f}€\n"
+                                f"Tiempo total: {time_var.get()}")
+
+        # Botones de control
+        toggle_button = ttk.Button(
+            button_frame,
+            text="Iniciar Movimiento",
+            command=toggle_movement,
+            width=20
+        )
+        toggle_button.pack(side=tk.LEFT, padx=5)
+
+        end_button = ttk.Button(
+            button_frame,
+            text="Finalizar Trayecto",
+            command=end_trip,
+            width=20
+        )
+        end_button.pack(side=tk.LEFT, padx=5)
+
+        # Iniciar actualización de display
+        update_display()
 
     # Mostrar tarifas actuales
     def show_current_rates(self):
