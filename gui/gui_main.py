@@ -257,6 +257,18 @@ class TaxiMeterGUI:
             self.password_var.set("")
             self.show_auth_frame()
 
+    # Iniciar un nuevo trayecto
+    def start_new_trip(self):
+        messagebox.showinfo("Info", "Iniciando nuevo trayecto...")
+
+    # Mostrar tarifas actuales
+    def show_current_rates(self):
+        messagebox.showinfo("Info", "Mostrando tarifas actuales...")
+
+    # Gestionar condiciones especiales
+    def manage_special_conditions(self):
+        messagebox.showinfo("Info", "Gestionando condiciones especiales...")
+
     def run(self):
         # Iniciar el bucle principal de la interfaz
         self.root.mainloop()
