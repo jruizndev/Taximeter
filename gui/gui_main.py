@@ -1,8 +1,6 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from auth.auth import Auth
-from tkinter import messagebox
-
 
 class TaxiMeterGUI:
     def __init__(self):
@@ -20,13 +18,13 @@ class TaxiMeterGUI:
         self.username_var = tk.StringVar()
         self.password_var = tk.StringVar()
 
-        # Crear y mostrar el frame de autenticación
-        self.create_auth_frame()
-
         # Variables para los campos de entrada de registro
         self.reg_username_var = tk.StringVar()
         self.reg_password_var = tk.StringVar()
         self.reg_confirm_password_var = tk.StringVar()
+
+         # Crear y mostrar el frame de autenticación
+        self.create_auth_frame()
 
     # Crear el frame de autenticación
     def create_auth_frame(self):
@@ -34,13 +32,13 @@ class TaxiMeterGUI:
         self.auth_frame.pack(expand=True)
         
         # Título
-        welcome_label = ttk.Label(
+        title_label = ttk.Label(
             self.auth_frame, 
             text="Bienvenido al Taxímetro Digital",
             font=("Helvetica", 16)
         )
-        welcome_label.pack(pady=20)
-        
+        title_label.pack(pady=20)
+
         # Frame para el formulario
         form_frame = ttk.Frame(self.auth_frame)
         form_frame.pack(pady=20)
@@ -83,6 +81,9 @@ class TaxiMeterGUI:
         success, result = self.auth.login(username, password)
         if success:
             messagebox.showinfo("Éxito", f"¡Bienvenido, {username}!")
+            self.current_user = result
+            self.auth_frame.pack_forget()
+            self.show_main_window()
         else:
             messagebox.showerror("Error", result)
     
@@ -179,6 +180,82 @@ class TaxiMeterGUI:
             self.show_auth_frame()  
         else:
             messagebox.showerror("Error", message)
+
+    # Muestra la ventana principal del taximetro
+    def show_main_window(self):
+        # Crear el frame principal
+        self.main_frame = ttk.Frame(self.root, padding="20")
+        self.main_frame.pack(expand=True, fill="both")
+
+        # Header con información del usuario
+        header_frame = ttk.Frame(self.main_frame)
+        header_frame.pack(fill="x", pady=(0, 20))
+
+        # Usuario actual y rol
+        user_label = ttk.Label(
+            header_frame,
+            text=f"Usuario: {self.current_user['username']} | Rol: {self.current_user['role']}",
+            font=("Helvetica", 10)
+        )
+        user_label.pack(side="left")
+
+        # Botón de cerrar sesión
+        logout_button = ttk.Button(
+            header_frame,
+            text="Cerrar Sesión",
+            command=self.handle_logout
+        )
+        logout_button.pack(side="right")
+
+        # Contenedor central
+        content_frame = ttk.Frame(self.main_frame)
+        content_frame.pack(expand=True, fill="both")
+
+        # Título
+        title_label = ttk.Label(
+            content_frame,
+            text="Sistema de Taxímetro Digital",
+            font=("Helvetica", 16)
+        )
+        title_label.pack(pady=20)
+
+        # Frame para los botones principales
+        buttons_frame = ttk.Frame(content_frame)
+        buttons_frame.pack(pady=20)
+
+        # Botones principales
+        new_trip_btn = ttk.Button(
+            buttons_frame,
+            text="Nuevo Trayecto",
+            command=self.start_new_trip,
+            width=30
+        )
+        new_trip_btn.pack(pady=10)
+
+        show_rates_btn = ttk.Button(
+            buttons_frame,
+            text="Ver Tarifas Actuales",
+            command=self.show_current_rates,
+            width=30
+        )
+        show_rates_btn.pack(pady=10)
+
+        manage_conditions_btn = ttk.Button(
+            buttons_frame,
+            text="Gestionar Condiciones Especiales",
+            command=self.manage_special_conditions,
+            width=30
+        )
+        manage_conditions_btn.pack(pady=10)
+
+    # Maneja el cierre de sesión
+    def handle_logout(self):
+        if messagebox.askyesno("Cerrar Sesión", "¿Estás seguro de que quieres cerrar sesión?"):
+            self.current_user = None
+            self.main_frame.destroy()
+            self.username_var.set("")
+            self.password_var.set("")
+            self.show_auth_frame()
 
     def run(self):
         # Iniciar el bucle principal de la interfaz
