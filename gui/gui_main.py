@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from auth.auth import Auth
+from config.config import TIME_SLOTS, SPECIAL_CONDITIONS
 
 class TaxiMeterGUI:
     def __init__(self):
@@ -263,7 +264,87 @@ class TaxiMeterGUI:
 
     # Mostrar tarifas actuales
     def show_current_rates(self):
-        messagebox.showinfo("Info", "Mostrando tarifas actuales...")
+        # Crear una nueva ventana para las tarifas
+        rates_window = tk.Toplevel(self.root)
+        rates_window.title("Tarifas Actuales")
+        rates_window.geometry("600x500")  # Aumentado el tamaño para mostrar más información
+    
+        # Frame principal
+        main_frame = ttk.Frame(rates_window, padding="20")
+        main_frame.pack(expand=True, fill="both")
+    
+        # Título
+        title_label = ttk.Label(
+            main_frame,
+            text="TARIFAS DEL TAXÍMETRO",
+            font=("Helvetica", 16, "bold")
+        )
+        title_label.pack(pady=(0, 20))
+    
+        # Frame para la información de tarifas
+        rates_frame = ttk.Frame(main_frame)
+        rates_frame.pack(fill="both", expand=True)
+    
+        # Crear cabeceras
+        headers = ["Tipo de Tarifa", "Horario", "En movimiento", "Parado"]
+        for col, header in enumerate(headers):
+            label = ttk.Label(rates_frame, text=header, font=("Helvetica", 10, "bold"))
+            label.grid(row=0, column=col, padx=10, pady=5, sticky="w")
+    
+        # Añadir tarifas normales
+        row = 1
+        for slot_name, slot_info in TIME_SLOTS.items():
+            # Descripción
+            ttk.Label(rates_frame, text=slot_info['description']).grid(
+                row=row, column=0, padx=10, pady=5, sticky="w")
+        
+            # Horario
+            if slot_name != 'normal':
+                time_range = f"{slot_info['start']} - {slot_info['end']}"
+            else:
+                time_range = "Resto de horas"
+            ttk.Label(rates_frame, text=time_range).grid(
+                row=row, column=1, padx=10, pady=5)
+        
+            # Tarifas
+            ttk.Label(rates_frame, text=f"{slot_info['motion_rate']}€/s").grid(
+                row=row, column=2, padx=10, pady=5)
+            ttk.Label(rates_frame, text=f"{slot_info['stopped_rate']}€/s").grid(
+                row=row, column=3, padx=10, pady=5)
+        
+            row += 1
+    
+        # Separador
+        ttk.Separator(rates_frame, orient='horizontal').grid(
+            row=row, column=0, columnspan=4, sticky="ew", pady=10)
+        row += 1
+    
+        # Título condiciones especiales
+        special_label = ttk.Label(
+            rates_frame,
+            text="Condiciones Especiales (Multiplicadores)",
+            font=("Helvetica", 10, "bold")
+        )
+        special_label.grid(row=row, column=0, columnspan=4, pady=10, sticky="w")
+        row += 1
+    
+        # Añadir condiciones especiales
+        for condition, multiplier in SPECIAL_CONDITIONS.items():
+            condition_name = "Lluvia" if condition == "rain" else "Eventos especiales"
+            ttk.Label(rates_frame, text=condition_name).grid(
+                row=row, column=0, padx=10, pady=5, sticky="w")
+            ttk.Label(rates_frame, text=f"x{multiplier}").grid(
+                row=row, column=1, columnspan=3, padx=10, pady=5)
+            row += 1
+    
+        # Botón cerrar
+        close_button = ttk.Button(
+            main_frame,
+            text="Cerrar",
+            command=rates_window.destroy,
+            width=20
+        )
+        close_button.pack(pady=20)
 
     # Gestionar condiciones especiales
     def manage_special_conditions(self):
