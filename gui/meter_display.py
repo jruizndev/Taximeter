@@ -9,15 +9,20 @@ class MeterDisplay(ttk.Frame):
         self.master = master
         self.active_condition = None
 
-        # Variables de control
+        # Variables de estado
+        self.status_var = tk.StringVar(value="LIBRE")
+        self.time_var = tk.StringVar(value="00:00")
+        self.fare_var = tk.StringVar(value="0.00 €")
+
+        # Variables de control de viaje
         self.is_moving = False
+        self.trip_in_progress = False
         self.start_time = None
         self.accumulated_fare = 0.0
         self.last_update = None
 
         self._create_widgets()
 
-    # Crea los widgets del taxímetro
     def _create_widgets(self):
         # Título 
         title_label = ttk.Label(
@@ -27,19 +32,58 @@ class MeterDisplay(ttk.Frame):
         )
         title_label.pack(pady=(0, 20))
 
+        # Frame principal de control de viaje
+        self.trip_control_frame = ttk.Frame(self)
+        self.trip_control_frame.pack(fill="x", pady=10)
+
+        # Labels para estado, tiempo y tarifa
+        status_label = ttk.Label(self, text="LIBRE", font=("Arial", 24, "bold"))
+        status_label.configure(textvariable=self.status_var)
+        status_label.pack(pady=10)
+
+        time_label = ttk.Label(self, text="00:00", font=("Arial", 36, "bold"))  
+        time_label.configure(textvariable=self.time_var)  
+        time_label.pack(pady=10)
+
+        fare_label = ttk.Label(self, text="0.00 €", font=("Arial", 36, "bold"))
+        fare_label.configure(textvariable=self.fare_var)
+        fare_label.pack(pady=10)
+
         # Frame para botones principales
         buttons_frame = ttk.Frame(self)
         buttons_frame.pack(pady=20)
 
         # Botones principales
-        new_trip_btn = ttk.Button(
+        self.new_trip_btn = ttk.Button(
             buttons_frame,
             text="Nuevo Trayecto",
             command=self.start_new_trip,
             width=30
         )
-        new_trip_btn.pack(pady=10)
+        self.new_trip_btn.pack(pady=10)
 
+        # Botones de control de viaje (inicialmente ocultos)
+        self.trip_control_btn_frame = ttk.Frame(self)
+        self.trip_control_btn_frame.pack(pady=10)
+        self.trip_control_btn_frame.pack_forget()
+
+        self.toggle_movement_btn = ttk.Button(
+            self.trip_control_btn_frame,
+            text="Iniciar Movimiento",
+            command=self.toggle_movement,
+            width=20
+        )
+        self.toggle_movement_btn.pack(side=tk.LEFT, padx=5)
+
+        self.end_trip_btn = ttk.Button(
+            self.trip_control_btn_frame,
+            text="Finalizar Trayecto", 
+            command=self.end_trip,
+            width=20
+        )
+        self.end_trip_btn.pack(side=tk.LEFT, padx=5)
+
+        # Botones adicionales
         show_rates_btn = ttk.Button(
             buttons_frame,
             text="Ver Tarifas Actuales", 
@@ -56,117 +100,75 @@ class MeterDisplay(ttk.Frame):
         )
         manage_conditions_btn.pack(pady=10)
 
-    # Inicia un nuevo trayecto
     def start_new_trip(self):
-        # Crear ventana para el nuevo trayecto
-        trip_window = tk.Toplevel(self.master)
-        trip_window.title("Nuevo Trayecto")
-        trip_window.geometry("500x400")
-
         # Reiniciar variables de control
-        self.is_moving = False  
+        self.is_moving = False
+        self.trip_in_progress = True
         self.start_time = time.time()
         self.accumulated_fare = 0.0
         self.last_update = self.start_time
 
-        # Frame principal
-        main_frame = ttk.Frame(trip_window, padding=20)
-        main_frame.pack(expand=True, fill="both")
-
-        # Título
-        title_label = ttk.Label(
-            main_frame,
-            text="Trayecto en Curso",
-            font=("Helvetica", 16, "bold")  
-        )
-        title_label.pack(pady=(0, 20))
-
-        # Frame info
-        info_frame = ttk.Frame(main_frame)
-        info_frame.pack(fill="both", expand=True)
-
-        # Labels info
-        state_var = tk.StringVar(value="PARADO")
-        time_var = tk.StringVar(value="0:00")   
-        fare_var = tk.StringVar(value="0.00€")
-
-        # Estado actual 
-        ttk.Label(info_frame, text="Estado:", font=("Helvetica", 12)).pack(pady=5)
-        state_label = ttk.Label(info_frame, textvariable=state_var, font=("Helvetica", 14, "bold"))  
-        state_label.pack(pady=5)
-
-        # Tiempo transcurrido
-        ttk.Label(info_frame, text="Tiempo:", font=("Helvetica", 12)).pack(pady=5)
-        time_label = ttk.Label(info_frame, textvariable=time_var, font=("Helvetica", 14, "bold"))
-        time_label.pack(pady=5)
-
-        # Tarifa acumulada  
-        ttk.Label(info_frame, text="Tarifa:", font=("Helvetica", 12)).pack(pady=5)
-        fare_label = ttk.Label(info_frame, textvariable=fare_var, font=("Helvetica", 14, "bold"))
-        fare_label.pack(pady=5)  
-
-        # Frame botones
-        button_frame = ttk.Frame(main_frame)
-        button_frame.pack(pady=20)
-
-        # Actualizar estado
-        def update_display():
-            current_time = time.time()
-            elapsed = current_time - self.start_time
-        
-            # Actualizar tiempo
-            minutes, seconds = divmod(int(elapsed), 60)  
-            time_var.set(f"{minutes}:{seconds:02d}")
-        
-            # Calcular tarifa
-            rate = TIME_SLOTS['normal']  # Tarifa normal por defecto
-            rate_multiplier = 1.0
-        
-            if self.active_condition:
-                rate_multiplier = SPECIAL_CONDITIONS[self.active_condition]
-        
-            current_rate = rate['motion_rate'] if self.is_moving else rate['stopped_rate']
-            time_diff = current_time - self.last_update
-            self.accumulated_fare += current_rate * rate_multiplier * time_diff
-        
-            fare_var.set(f"{self.accumulated_fare:.2f}€")
-            self.last_update = current_time
-        
-            # Programar próxima actualización
-            self.after(1000, update_display)
-
-        def toggle_movement():
-            self.is_moving = not self.is_moving
-            state_var.set("EN MOVIMIENTO" if self.is_moving else "PARADO")
-
-        def end_trip():
-            if messagebox.askyesno("Finalizar Trayecto", "¿Desea finalizar el trayecto actual?"):
-                trip_window.destroy()
-                messagebox.showinfo(
-                    "Trayecto Finalizado",
-                    f"Tarifa final: {self.accumulated_fare:.2f}€\n"
-                    f"Tiempo total: {time_var.get()}"
-                )
-    
-        # Botones control
-        toggle_button = ttk.Button(
-            button_frame,  
-            text="Iniciar Movimiento",
-            command=toggle_movement,
-            width=20
-        )
-        toggle_button.pack(side=tk.LEFT, padx=5)
-
-        end_button = ttk.Button(
-            button_frame,
-            text="Finalizar Trayecto", 
-            command=end_trip,
-            width=20
-        )
-        end_button.pack(side=tk.LEFT, padx=5)
+        # Cambiar estado visual
+        self.status_var.set("EN TRAYECTO")
+        self.new_trip_btn.pack_forget()
+        self.trip_control_btn_frame.pack(pady=10)
 
         # Iniciar actualización display
-        self.after(1000, update_display)
+        self.update_display()
+
+    def update_display(self):
+        if not self.trip_in_progress:
+            return
+
+        current_time = time.time()
+        elapsed = current_time - self.start_time
+    
+        # Actualizar tiempo
+        minutes, seconds = divmod(int(elapsed), 60)  
+        self.time_var.set(f"{minutes}:{seconds:02d}")
+    
+        # Calcular tarifa
+        rate = TIME_SLOTS['normal']  # Tarifa normal por defecto
+        rate_multiplier = 1.0
+    
+        if self.active_condition:
+            rate_multiplier = SPECIAL_CONDITIONS[self.active_condition]
+    
+        current_rate = rate['motion_rate'] if self.is_moving else rate['stopped_rate']
+        time_diff = current_time - self.last_update
+        self.accumulated_fare += current_rate * rate_multiplier * time_diff
+    
+        self.fare_var.set(f"{self.accumulated_fare:.2f}€")
+        self.last_update = current_time
+    
+        # Programar próxima actualización
+        self.after(1000, self.update_display)
+
+    def toggle_movement(self):
+        self.is_moving = not self.is_moving
+        self.toggle_movement_btn.configure(
+            text="Detener Movimiento" if self.is_moving else "Iniciar Movimiento"
+        )
+
+    def end_trip(self):
+        if messagebox.askyesno("Finalizar Trayecto", "¿Desea finalizar el trayecto actual?"):
+            # Detener actualización
+            self.trip_in_progress = False
+            
+            # Mostrar resumen
+            messagebox.showinfo(
+                "Trayecto Finalizado",
+                f"Tarifa final: {self.accumulated_fare:.2f}€\n"
+                f"Tiempo total: {self.time_var.get()}"
+            )
+
+            # Restaurar interfaz
+            self.status_var.set("LIBRE")
+            self.time_var.set("00:00")
+            self.fare_var.set("0.00 €")
+            
+            self.trip_control_btn_frame.pack_forget()
+            self.new_trip_btn.pack(pady=10)
 
     def show_current_rates(self):
         # Crear ventana para mostrar tarifas
