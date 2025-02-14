@@ -204,3 +204,12 @@ class AuthFrame(ttk.Frame):
             self.username_var.set(username)
         else:
             messagebox.showerror("Error", message)
+
+    def reset_fields(self):
+        self.username_var.set("")
+        self.password_var.set("")
+        self.reg_username_var.set("") 
+        self.reg_password_var.set("")
+        self.reg_confirm_password_var.set("")
+        self._create_login_view()
+    
