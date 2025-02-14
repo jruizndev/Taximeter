@@ -1,21 +1,22 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from config.config import TIME_SLOTS, SPECIAL_CONDITIONS
 import time
+from datetime import datetime
 
 class MeterDisplay(ttk.Frame):
     def __init__(self, master):
         super().__init__(master, padding=20)
+        self.master = master
+        self.active_condition = None
 
-        # Variables esenciales
-        self.license_number = "1234-ABC"
-        self.message_var = tk.StringVar()
-        self.current_time = tk.StringVar()
-        self.time_var = tk.StringVar(value="00:00")
-        self.current_rate_type = tk.StringVar(value="TARIFA NORMAL")
-        self.distance = tk.StringVar(value="0.0 KM")
+        # Variables de estado
         self.status_var = tk.StringVar(value="LIBRE")
+        self.time_var = tk.StringVar(value="00:00")
         self.fare_var = tk.StringVar(value="0.00 €")
+        self.message_var = tk.StringVar(value="")
+        self.date_var = tk.StringVar()
+        self.clock_var = tk.StringVar()
 
         # Variables de control de viaje
         self.is_moving = False
@@ -24,94 +25,48 @@ class MeterDisplay(ttk.Frame):
         self.accumulated_fare = 0.0
         self.last_update = None
         self.end_trip_confirmation = False
-        self.active_condition = None
-        
-        self._create_display()
-        self._update_time()
 
-    def _create_display(self):
-        # Panel Superior
-        top_panel = ttk.Frame(self)
-        top_panel.pack(fill="x")
-        ttk.Label(top_panel, text=f"LIC: {self.license_number}").pack(side="left")
-        ttk.Label(top_panel, textvariable=self.current_time).pack(side="right")
-        
-        # Panel Principal
-        main_panel = ttk.Frame(self)
-        main_panel.pack(expand=True, fill="both", pady=20)
-        
-        # Área de mensajes
-        ttk.Label(main_panel, textvariable=self.message_var, foreground="red").pack(pady=5)
-        
-        # Estado y métricas principales
-        ttk.Label(main_panel, textvariable=self.status_var, font=("Arial", 24, "bold")).pack(pady=5)
-        ttk.Label(main_panel, textvariable=self.time_var, font=("Arial", 36, "bold")).pack(pady=5)
-        ttk.Label(main_panel, textvariable=self.fare_var, font=("Arial", 36, "bold")).pack(pady=5)
-        ttk.Label(main_panel, textvariable=self.distance).pack(pady=5)
-        
-        # Panel Inferior
-        bottom_panel = ttk.Frame(self)
-        bottom_panel.pack(fill="x")
-        ttk.Label(bottom_panel, textvariable=self.current_rate_type).pack()
-        
-        # Botones
-        self._create_buttons()
+        # Configurar pantalla inicial y actualizar fecha/hora
+        self._update_datetime()
+        self._create_main_widgets()
+        self._start_clock()
 
-    def _create_buttons(self):
-        # Frame para botones principales
-        buttons_frame = ttk.Frame(self)
-        buttons_frame.pack(pady=20)
-        
-        # Botón nuevo trayecto
-        self.new_trip_btn = ttk.Button(
-            buttons_frame,
-            text="Nuevo Trayecto",
-            command=self.start_new_trip,
-            width=30
+    def _update_datetime(self):
+        # Actualizar fecha y hora
+        now = datetime.now()
+        self.date_var.set(now.strftime("%d/%m/%Y"))
+        self.clock_var.set(now.strftime("%H:%M:%S"))
+
+    def _start_clock(self):
+        # Actualizar hora cada segundo
+        self._update_datetime()
+        self.after(1000, self._start_clock)
+
+    def _create_main_widgets(self):
+        # Limpiar frame anterior si existe
+        for widget in self.winfo_children():
+            widget.destroy()
+
+        # Frame para fecha y hora
+        datetime_frame = ttk.Frame(self)
+        datetime_frame.pack(fill='x', padx=10, pady=5)
+
+        # Fecha en la esquina superior izquierda
+        date_label = ttk.Label(
+            datetime_frame, 
+            textvariable=self.date_var, 
+            font=("Helvetica", 10)
         )
-        self.new_trip_btn.pack(pady=10)
-        
-        # Frame control de viaje
-        self.trip_control_btn_frame = ttk.Frame(self)
-        
-        # Botones de control
-        self.toggle_movement_btn = ttk.Button(
-            self.trip_control_btn_frame,
-            text="Iniciar Movimiento",
-            command=self.toggle_movement,
-            width=20
-        )
-        self.toggle_movement_btn.pack(side=tk.LEFT, padx=5)
-        
-        self.end_trip_btn = ttk.Button(
-            self.trip_control_btn_frame,
-            text="Finalizar Trayecto",
-            command=self.end_trip,
-            width=20
-        )
-        self.end_trip_btn.pack(side=tk.LEFT, padx=5)
-        
-        # Botones adicionales
-        ttk.Button(
-            buttons_frame,
-            text="Ver Tarifas Actuales",
-            command=self.show_current_rates,
-            width=30
-        ).pack(pady=10)
-        
-        ttk.Button(
-            buttons_frame,
-            text="Gestionar Condiciones Especiales",
-            command=self.manage_special_conditions,
-            width=30
-        ).pack(pady=10)
+        date_label.pack(side=tk.LEFT)
 
-    def _update_time(self):
-        """Actualiza el reloj"""
-        self.current_time.set(time.strftime("%H:%M:%S"))
-        self.after(1000, self._update_time)
+        # Hora en la esquina superior derecha
+        time_label = ttk.Label(
+            datetime_frame, 
+            textvariable=self.clock_var, 
+            font=("Helvetica", 10)
+        )
+        time_label.pack(side=tk.RIGHT)
 
-    def _create_widgets(self):
         # Título 
         title_label = ttk.Label(
             self,
@@ -185,13 +140,173 @@ class MeterDisplay(ttk.Frame):
         )
         show_rates_btn.pack(pady=10)
 
-        manage_conditions_btn = ttk.Button(
+        special_conditions_btn = ttk.Button(
             buttons_frame,
-            text="Gestionar Condiciones Especiales",
-            command=self.manage_special_conditions,
+            text="Condiciones Especiales",
+            command=self.show_special_conditions,
             width=30
         )
-        manage_conditions_btn.pack(pady=10)
+        special_conditions_btn.pack(pady=10)
+
+    def _create_special_conditions_widgets(self):
+        # Limpiar frame anterior
+        for widget in self.winfo_children():
+            widget.destroy()
+
+        # Título
+        title_label = ttk.Label(
+            self,
+            text="Condiciones Especiales",
+            font=("Helvetica", 16, "bold")
+        )
+        title_label.pack(pady=(0, 20))
+
+        # Variable selección
+        selected_condition = tk.StringVar(value=self.active_condition or "none")
+
+        # Frame opciones
+        options_frame = ttk.Frame(self)
+        options_frame.pack(fill="both", expand=True, padx=20)
+
+        # Opción sin condiciones especiales
+        ttk.Radiobutton( 
+            options_frame,
+            text="Sin condiciones especiales",
+            value="none", 
+            variable=selected_condition
+        ).pack(pady=5, anchor="w")  
+
+        # Opciones condiciones especiales
+        for condition, multiplier in SPECIAL_CONDITIONS.items():
+            condition_name = "Lluvia" if condition == "rain" else "Eventos especiales"
+            ttk.Radiobutton(
+                options_frame,
+                text=f"{condition_name} (x{multiplier})", 
+                value=condition,
+                variable=selected_condition 
+            ).pack(pady=5, anchor="w")
+
+        # Frame botones
+        button_frame = ttk.Frame(self)
+        button_frame.pack(pady=20)
+
+        def apply_conditions():
+            # Aplicar condición seleccionada
+            if selected_condition.get() == "none":
+                self.active_condition = None
+            else:
+                self.active_condition = selected_condition.get()
+            
+            # Volver a la pantalla principal
+            self._create_main_widgets()
+
+        def go_back():
+            # Volver a la pantalla principal sin cambios
+            self._create_main_widgets()
+
+        # Botones
+        apply_button = ttk.Button(
+            button_frame, 
+            text="Aplicar",
+            command=apply_conditions,
+            width=15 
+        )
+        apply_button.pack(side=tk.LEFT, padx=5)
+
+        back_button = ttk.Button(
+            button_frame,
+            text="Volver", 
+            command=go_back,
+            width=15
+        )
+        back_button.pack(side=tk.LEFT, padx=5)
+
+    def _create_rates_widgets(self):
+        # Limpiar frame anterior
+        for widget in self.winfo_children():
+            widget.destroy()
+
+        # Título
+        title_label = ttk.Label(
+            self,
+            text="TARIFAS DEL TAXÍMETRO", 
+            font=("Helvetica", 16, "bold")
+        )
+        title_label.pack(pady=(0, 20))
+
+        # Frame info tarifas  
+        rates_frame = ttk.Frame(self)
+        rates_frame.pack(fill="both", expand=True, padx=20)
+
+        # Cabeceras
+        headers = ["Tipo de Tarifa", "Horario", "En movimiento", "Parado"] 
+        for col, header in enumerate(headers):
+            label = ttk.Label(rates_frame, text=header, font=("Helvetica", 10, "bold"))
+            label.grid(row=0, column=col, padx=10, pady=5, sticky="w")
+
+        # Tarifas normales
+        row = 1
+        for slot_name, slot_info in TIME_SLOTS.items():
+            # Descripción
+            ttk.Label(rates_frame, text=slot_info['description']).grid(
+                row=row, column=0, padx=10, pady=5, sticky="w")
+        
+            # Horario  
+            time_range = f"{slot_info['start']} - {slot_info['end']}" if slot_name != 'normal' else "Resto de horas"
+            ttk.Label(rates_frame, text=time_range).grid(
+                row=row, column=1, padx=10, pady=5)
+        
+            # Tarifas
+            ttk.Label(rates_frame, text=f"{slot_info['motion_rate']}€/s").grid(
+                row=row, column=2, padx=10, pady=5)    
+            ttk.Label(rates_frame, text=f"{slot_info['stopped_rate']}€/s").grid(
+                row=row, column=3, padx=10, pady=5)
+        
+            row += 1
+
+        # Separador  
+        ttk.Separator(rates_frame, orient='horizontal').grid(
+            row=row, column=0, columnspan=4, sticky="ew", pady=10)  
+        row += 1
+
+        # Título condiciones especiales
+        special_label = ttk.Label(
+            rates_frame,  
+            text="Condiciones Especiales (Multiplicadores)",
+            font=("Helvetica", 10, "bold")  
+        )
+        special_label.grid(row=row, column=0, columnspan=4, pady=10, sticky="w")
+        row += 1
+
+        # Condiciones especiales 
+        for condition, multiplier in SPECIAL_CONDITIONS.items():
+            condition_name = "Lluvia" if condition == "rain" else "Eventos especiales" 
+            ttk.Label(rates_frame, text=condition_name).grid(
+                row=row, column=0, padx=10, pady=5, sticky="w")
+            ttk.Label(rates_frame, text=f"x{multiplier}").grid(  
+                row=row, column=1, columnspan=3, padx=10, pady=5)
+            row += 1
+
+        # Frame botones
+        button_frame = ttk.Frame(self)
+        button_frame.pack(pady=20)
+
+        # Botón volver
+        back_button = ttk.Button(
+            button_frame,
+            text="Volver", 
+            command=self._create_main_widgets,
+            width=20
+        )
+        back_button.pack()
+
+    def show_special_conditions(self):
+        # Mostrar pantalla de condiciones especiales
+        self._create_special_conditions_widgets()
+
+    def show_current_rates(self):
+        # Mostrar pantalla de tarifas
+        self._create_rates_widgets()
 
     def show_message(self, message, duration=3):
         self.message_var.set(message)
@@ -274,155 +389,3 @@ class MeterDisplay(ttk.Frame):
     
         # Programar próxima actualización
         self.after(1000, self.update_display)
-
-    def show_current_rates(self):
-        # Crear ventana para mostrar tarifas
-        rates_window = tk.Toplevel(self.master)
-        rates_window.title("Tarifas Actuales")
-        rates_window.geometry("600x500") 
-    
-        # Frame principal
-        main_frame = ttk.Frame(rates_window, padding=20)
-        main_frame.pack(expand=True, fill="both") 
-
-        # Título
-        title_label = ttk.Label(
-            main_frame,
-            text="TARIFAS DEL TAXÍMETRO", 
-            font=("Helvetica", 16, "bold")
-        )
-        title_label.pack(pady=(0, 20))
-
-        # Frame info tarifas  
-        rates_frame = ttk.Frame(main_frame)
-        rates_frame.pack(fill="both", expand=True)
-
-        # Cabeceras
-        headers = ["Tipo de Tarifa", "Horario", "En movimiento", "Parado"] 
-        for col, header in enumerate(headers):
-            label = ttk.Label(rates_frame, text=header, font=("Helvetica", 10, "bold"))
-            label.grid(row=0, column=col, padx=10, pady=5, sticky="w")
-
-        # Tarifas normales
-        row = 1
-        for slot_name, slot_info in TIME_SLOTS.items():
-            # Descripción
-            ttk.Label(rates_frame, text=slot_info['description']).grid(
-                row=row, column=0, padx=10, pady=5, sticky="w")
-        
-            # Horario  
-            time_range = f"{slot_info['start']} - {slot_info['end']}" if slot_name != 'normal' else "Resto de horas"
-            ttk.Label(rates_frame, text=time_range).grid(
-                row=row, column=1, padx=10, pady=5)
-        
-            # Tarifas
-            ttk.Label(rates_frame, text=f"{slot_info['motion_rate']}€/s").grid(
-                row=row, column=2, padx=10, pady=5)    
-            ttk.Label(rates_frame, text=f"{slot_info['stopped_rate']}€/s").grid(
-                row=row, column=3, padx=10, pady=5)
-        
-            row += 1
-
-        # Separador  
-        ttk.Separator(rates_frame, orient='horizontal').grid(
-            row=row, column=0, columnspan=4, sticky="ew", pady=10)  
-        row += 1
-
-        # Título condiciones especiales
-        special_label = ttk.Label(
-            rates_frame,  
-            text="Condiciones Especiales (Multiplicadores)",
-            font=("Helvetica", 10, "bold")  
-        )
-        special_label.grid(row=row, column=0, columnspan=4, pady=10, sticky="w")
-        row += 1
-
-        # Condiciones especiales 
-        for condition, multiplier in SPECIAL_CONDITIONS.items():
-            condition_name = "Lluvia" if condition == "rain" else "Eventos especiales" 
-            ttk.Label(rates_frame, text=condition_name).grid(
-                row=row, column=0, padx=10, pady=5, sticky="w")
-            ttk.Label(rates_frame, text=f"x{multiplier}").grid(  
-                row=row, column=1, columnspan=3, padx=10, pady=5)
-            row += 1
-
-        # Botón cerrar
-        close_button = ttk.Button(  
-            main_frame,
-            text="Cerrar",
-            command=rates_window.destroy, 
-            width=20
-        )
-        close_button.pack(pady=20)
-
-    def manage_special_conditions(self):
-        # Crear ventana para gestionar condiciones especiales
-        conditions_window = tk.Toplevel(self.master)
-        conditions_window.title("Gestionar Condiciones Especiales")
-        conditions_window.geometry("400x300") 
-
-        # Frame principal
-        main_frame = ttk.Frame(conditions_window, padding=20)
-        main_frame.pack(expand=True, fill="both")
-
-        # Título
-        title_label = ttk.Label(
-            main_frame,
-            text="Gestionar Condiciones Especiales",  
-            font=("Helvetica", 16, "bold")
-        )
-        title_label.pack(pady=(0, 20))
-
-        # Variable selección
-        selected_condition = tk.StringVar(value=self.active_condition or "none")
-
-        # Frame opciones
-        options_frame = ttk.Frame(main_frame)  
-        options_frame.pack(fill="both", expand=True)
-
-        # Opción sin condiciones especiales
-        ttk.Radiobutton( 
-            options_frame,
-            text="Sin condiciones especiales",
-            value="none", 
-            variable=selected_condition
-        ).pack(pady=5, anchor="w")  
-
-        # Opciones condiciones especiales
-        for condition, multiplier in SPECIAL_CONDITIONS.items():
-            condition_name = "Lluvia" if condition == "rain" else "Eventos especiales"
-            ttk.Radiobutton(
-                options_frame,
-                text=f"{condition_name} (x{multiplier})", 
-                value=condition,
-                variable=selected_condition 
-            ).pack(pady=5, anchor="w")
-
-        # Frame botones
-        button_frame = ttk.Frame(main_frame) 
-        button_frame.pack(pady=20)
-
-        def apply_conditions():
-            self.active_condition = None if selected_condition.get() == "none" else selected_condition.get()
-            conditions_window.destroy() 
-            messagebox.showinfo(
-                "Éxito",
-                "Condiciones especiales aplicadas correctamente" if self.active_condition else "Condiciones especiales desactivadas"  
-            )
-
-        # Botones
-        apply_button = ttk.Button(
-            button_frame, 
-            text="Aplicar",
-            command=apply_conditions,
-            width=15 
-        )
-        apply_button.pack(side=tk.LEFT, padx=5)
-
-        cancel_button = ttk.Button( 
-            button_frame,
-            text="Cancelar", 
-            command=conditions_window.destroy,
-            width=15
-        )  
-        cancel_button.pack(side=tk.LEFT, padx=5)
