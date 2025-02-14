@@ -6,14 +6,16 @@ import time
 class MeterDisplay(ttk.Frame):
     def __init__(self, master):
         super().__init__(master, padding=20)
-        self.master = master
-        self.active_condition = None
 
-        # Variables de estado
-        self.status_var = tk.StringVar(value="LIBRE")
+        # Variables esenciales
+        self.license_number = "1234-ABC"
+        self.message_var = tk.StringVar()
+        self.current_time = tk.StringVar()
         self.time_var = tk.StringVar(value="00:00")
+        self.current_rate_type = tk.StringVar(value="TARIFA NORMAL")
+        self.distance = tk.StringVar(value="0.0 KM")
+        self.status_var = tk.StringVar(value="LIBRE")
         self.fare_var = tk.StringVar(value="0.00 €")
-        self.message_var = tk.StringVar(value="")
 
         # Variables de control de viaje
         self.is_moving = False
@@ -22,8 +24,92 @@ class MeterDisplay(ttk.Frame):
         self.accumulated_fare = 0.0
         self.last_update = None
         self.end_trip_confirmation = False
+        self.active_condition = None
+        
+        self._create_display()
+        self._update_time()
 
-        self._create_widgets()
+    def _create_display(self):
+        # Panel Superior
+        top_panel = ttk.Frame(self)
+        top_panel.pack(fill="x")
+        ttk.Label(top_panel, text=f"LIC: {self.license_number}").pack(side="left")
+        ttk.Label(top_panel, textvariable=self.current_time).pack(side="right")
+        
+        # Panel Principal
+        main_panel = ttk.Frame(self)
+        main_panel.pack(expand=True, fill="both", pady=20)
+        
+        # Área de mensajes
+        ttk.Label(main_panel, textvariable=self.message_var, foreground="red").pack(pady=5)
+        
+        # Estado y métricas principales
+        ttk.Label(main_panel, textvariable=self.status_var, font=("Arial", 24, "bold")).pack(pady=5)
+        ttk.Label(main_panel, textvariable=self.time_var, font=("Arial", 36, "bold")).pack(pady=5)
+        ttk.Label(main_panel, textvariable=self.fare_var, font=("Arial", 36, "bold")).pack(pady=5)
+        ttk.Label(main_panel, textvariable=self.distance).pack(pady=5)
+        
+        # Panel Inferior
+        bottom_panel = ttk.Frame(self)
+        bottom_panel.pack(fill="x")
+        ttk.Label(bottom_panel, textvariable=self.current_rate_type).pack()
+        
+        # Botones
+        self._create_buttons()
+
+    def _create_buttons(self):
+        # Frame para botones principales
+        buttons_frame = ttk.Frame(self)
+        buttons_frame.pack(pady=20)
+        
+        # Botón nuevo trayecto
+        self.new_trip_btn = ttk.Button(
+            buttons_frame,
+            text="Nuevo Trayecto",
+            command=self.start_new_trip,
+            width=30
+        )
+        self.new_trip_btn.pack(pady=10)
+        
+        # Frame control de viaje
+        self.trip_control_btn_frame = ttk.Frame(self)
+        
+        # Botones de control
+        self.toggle_movement_btn = ttk.Button(
+            self.trip_control_btn_frame,
+            text="Iniciar Movimiento",
+            command=self.toggle_movement,
+            width=20
+        )
+        self.toggle_movement_btn.pack(side=tk.LEFT, padx=5)
+        
+        self.end_trip_btn = ttk.Button(
+            self.trip_control_btn_frame,
+            text="Finalizar Trayecto",
+            command=self.end_trip,
+            width=20
+        )
+        self.end_trip_btn.pack(side=tk.LEFT, padx=5)
+        
+        # Botones adicionales
+        ttk.Button(
+            buttons_frame,
+            text="Ver Tarifas Actuales",
+            command=self.show_current_rates,
+            width=30
+        ).pack(pady=10)
+        
+        ttk.Button(
+            buttons_frame,
+            text="Gestionar Condiciones Especiales",
+            command=self.manage_special_conditions,
+            width=30
+        ).pack(pady=10)
+
+    def _update_time(self):
+        """Actualiza el reloj"""
+        self.current_time.set(time.strftime("%H:%M:%S"))
+        self.after(1000, self._update_time)
 
     def _create_widgets(self):
         # Título 
