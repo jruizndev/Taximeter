@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk
 from auth.auth import Auth
 
 # Frame de autenticación para el taxímetro.
@@ -18,9 +18,35 @@ class AuthFrame(ttk.Frame):
         self.reg_username_var = tk.StringVar()
         self.reg_password_var = tk.StringVar()
         self.reg_confirm_password_var = tk.StringVar()
-        
+
+        # Variable para mensajes
+        self.message_var = tk.StringVar()
+
         # Inicialmente mostramos la vista de login
         self._create_login_view()
+    
+    def _show_message(self, message, is_error=False):
+        # Limpiar mensaje anterior
+        if hasattr(self, 'message_label'):
+            self.message_label.destroy()
+        
+        # Crear etiqueta de mensaje
+        color = 'red' if is_error else 'green'
+        self.message_label = ttk.Label(
+            self, 
+            text=message,
+            foreground=color,
+            font=("Arial", 10)
+        )
+        self.message_label.pack(pady=10)
+        
+        # Programar eliminación del mensaje
+        self.after(3000, self._clear_message)
+    
+    def _clear_message(self):
+        # Eliminar etiqueta de mensaje si existe
+        if hasattr(self, 'message_label'):
+            self.message_label.destroy()
     
     # Crea la interfaz de inicio de sesión
     def _create_login_view(self):
@@ -179,7 +205,7 @@ class AuthFrame(ttk.Frame):
         if success:
             self.on_login_success(result)
         else:
-            messagebox.showerror("Error", result)
+            self._show_message(result, is_error=True)
 
     # Proceso de registro de usuario
     def _handle_register(self):
@@ -189,21 +215,21 @@ class AuthFrame(ttk.Frame):
         
         # Validaciones
         if not username or not password or not confirm_password:
-            messagebox.showerror("Error", "Todos los campos son obligatorios")
+            self._show_message("Todos los campos son obligatorios", is_error=True)
             return
             
         if password != confirm_password:
-            messagebox.showerror("Error", "Las contraseñas no coinciden")
+            self._show_message("Las contraseñas no coinciden", is_error=True)
             return
             
         # Intento de registro
         success, message = self.auth.register_user(username, password)
         if success:
-            messagebox.showinfo("Éxito", "Usuario registrado correctamente")
+            self._show_message("Usuario registrado correctamente")
             self._create_login_view()
             self.username_var.set(username)
         else:
-            messagebox.showerror("Error", message)
+            self._show_message(message, is_error=True)
 
     def reset_fields(self):
         self.username_var.set("")

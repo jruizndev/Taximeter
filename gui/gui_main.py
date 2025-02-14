@@ -10,7 +10,7 @@ class TaxiMeterGUI:
         self.root.geometry("800x600")
         
         self.auth_frame = AuthFrame(self.root, self.show_main_window)
-        self.auth_frame.pack(expand=True)
+        self.auth_frame.pack(expand=True, fill="both")
 
     def show_main_window(self, user):
         self.current_user = user
@@ -25,7 +25,7 @@ class TaxiMeterGUI:
         user_label = ttk.Label(
             header_frame,
             text=f"Usuario: {user['username']} | Rol: {user['role']}",
-            font=("Helvetica", 10)
+            style='TLabel'
         )
         user_label.pack(side="left")
 
@@ -42,7 +42,7 @@ class TaxiMeterGUI:
     def handle_logout(self):
         self.main_frame.destroy()
         self.auth_frame.reset_fields()  
-        self.auth_frame.pack(expand=True)
+        self.auth_frame.pack(expand=True, fill="both")
 
     def run(self):
         self.root.mainloop()
