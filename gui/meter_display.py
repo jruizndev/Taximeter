@@ -150,16 +150,16 @@ class MeterDisplay(ttk.Frame):
         # Segunda pulsación - confirmar fin de trayecto
         self.trip_in_progress = False
         self.end_trip_confirmation = False
+
+        # Cambiar estado visual
+        self.status_var.set("TRAYECTO FINALIZADO")
         
         # Mostrar resumen
         resumen = f"Trayecto finalizado\nTarifa: {self.accumulated_fare:.2f}€\nTiempo: {self.time_var.get()}"
         self.show_message(resumen, 5)
-        
+    
         self.trip_control_btn_frame.pack_forget()
         self.new_trip_btn.pack(pady=10)
-
-        # Iniciar actualización display
-        self.update_display()
 
     def update_display(self):
         if not self.trip_in_progress:
