@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk
 from config.config import TIME_SLOTS, SPECIAL_CONDITIONS
 import time
 
@@ -13,6 +13,7 @@ class MeterDisplay(ttk.Frame):
         self.status_var = tk.StringVar(value="LIBRE")
         self.time_var = tk.StringVar(value="00:00")
         self.fare_var = tk.StringVar(value="0.00 €")
+        self.message_var = tk.StringVar(value="")
 
         # Variables de control de viaje
         self.is_moving = False
@@ -20,6 +21,7 @@ class MeterDisplay(ttk.Frame):
         self.start_time = None
         self.accumulated_fare = 0.0
         self.last_update = None
+        self.end_trip_confirmation = False
 
         self._create_widgets()
 
@@ -32,9 +34,14 @@ class MeterDisplay(ttk.Frame):
         )
         title_label.pack(pady=(0, 20))
 
-        # Frame principal de control de viaje
-        self.trip_control_frame = ttk.Frame(self)
-        self.trip_control_frame.pack(fill="x", pady=10)
+        # Área de mensajes
+        self.message_label = ttk.Label(
+            self, 
+            textvariable=self.message_var,
+            font=("Helvetica", 12),
+            foreground="red"
+        )
+        self.message_label.pack(pady=10)
 
         # Labels para estado, tiempo y tarifa
         status_label = ttk.Label(self, text="LIBRE", font=("Arial", 24, "bold"))
@@ -100,6 +107,11 @@ class MeterDisplay(ttk.Frame):
         )
         manage_conditions_btn.pack(pady=10)
 
+    def show_message(self, message, duration=3):
+        self.message_var.set(message)
+        # Borrar mensaje después de duración
+        self.after(duration * 1000, lambda: self.message_var.set(""))
+
     def start_new_trip(self):
         # Reiniciar variables de control
         self.is_moving = False
@@ -107,11 +119,44 @@ class MeterDisplay(ttk.Frame):
         self.start_time = time.time()
         self.accumulated_fare = 0.0
         self.last_update = self.start_time
+        self.end_trip_confirmation = False
 
         # Cambiar estado visual
         self.status_var.set("EN TRAYECTO")
         self.new_trip_btn.pack_forget()
         self.trip_control_btn_frame.pack(pady=10)
+
+        # Mostrar mensaje de inicio
+        self.show_message("Trayecto iniciado", 2)
+
+        # Iniciar actualización display
+        self.update_display()
+
+    def toggle_movement(self):
+        self.is_moving = not self.is_moving
+        estado = "EN MOVIMIENTO" if self.is_moving else "PARADO"
+        self.show_message(f"Estado: {estado}", 2)
+        self.toggle_movement_btn.configure(
+            text="Detener Movimiento" if self.is_moving else "Iniciar Movimiento"
+        )
+
+    def end_trip(self):
+        if not self.end_trip_confirmation:
+            # Primera pulsación - solicitar confirmación
+            self.show_message("Pulsa de nuevo para confirmar fin de trayecto", 3)
+            self.end_trip_confirmation = True
+            return
+
+        # Segunda pulsación - confirmar fin de trayecto
+        self.trip_in_progress = False
+        self.end_trip_confirmation = False
+        
+        # Mostrar resumen
+        resumen = f"Trayecto finalizado\nTarifa: {self.accumulated_fare:.2f}€\nTiempo: {self.time_var.get()}"
+        self.show_message(resumen, 5)
+        
+        self.trip_control_btn_frame.pack_forget()
+        self.new_trip_btn.pack(pady=10)
 
         # Iniciar actualización display
         self.update_display()
@@ -143,32 +188,6 @@ class MeterDisplay(ttk.Frame):
     
         # Programar próxima actualización
         self.after(1000, self.update_display)
-
-    def toggle_movement(self):
-        self.is_moving = not self.is_moving
-        self.toggle_movement_btn.configure(
-            text="Detener Movimiento" if self.is_moving else "Iniciar Movimiento"
-        )
-
-    def end_trip(self):
-        if messagebox.askyesno("Finalizar Trayecto", "¿Desea finalizar el trayecto actual?"):
-            # Detener actualización
-            self.trip_in_progress = False
-            
-            # Mostrar resumen
-            messagebox.showinfo(
-                "Trayecto Finalizado",
-                f"Tarifa final: {self.accumulated_fare:.2f}€\n"
-                f"Tiempo total: {self.time_var.get()}"
-            )
-
-            # Restaurar interfaz
-            self.status_var.set("LIBRE")
-            self.time_var.set("00:00")
-            self.fare_var.set("0.00 €")
-            
-            self.trip_control_btn_frame.pack_forget()
-            self.new_trip_btn.pack(pady=10)
 
     def show_current_rates(self):
         # Crear ventana para mostrar tarifas
