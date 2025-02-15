@@ -170,13 +170,4 @@ git push origin feature/NuevaMejora
 ## 📝 Convenciones
 - Seguir PEP 8
 - Tests para nuevas funcionalidades
-3. Commit y push
-```bash
-git commit -m "feat: add nueva mejora"
-git push origin feature/NuevaMejora
-```
-
-## 📝 Convenciones
-- Seguir PEP 8
-- Tests para nuevas funcionalidades
 - Mantener tests actualizados
