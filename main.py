@@ -1,7 +1,7 @@
 import time
 import logging
 from datetime import datetime
-from config import TIME_SLOTS, SPECIAL_CONDITIONS
+from config.config import TIME_SLOTS, SPECIAL_CONDITIONS
 from auth.auth import Auth
 
 # Clase principal del taxímetro
