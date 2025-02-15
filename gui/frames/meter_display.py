@@ -70,7 +70,7 @@ class MeterDisplay(ttk.Frame):
         # Título 
         title_label = ttk.Label(
             self,
-            text="Sistema de Taxímetro Digital",
+            text="TAXÍMETRO DIGITAL",
             font=("Helvetica", 16, "bold")
         )
         title_label.pack(pady=(0, 20))
