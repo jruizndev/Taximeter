@@ -1,113 +1,182 @@
-# Taxímetro Digital 🚕
+# 🚕 Taxímetro Digital
 
-## Estado del Proyecto
-🚧 Under Construction 🚧
+<div align="center">
 
-## Tabla de Contenidos
-- [Descripción](#descripción)
-- [Estado Actual](#estado-actual)
-- [Tecnologías](#tecnologías)
-- [Estructura](#estructura)
-- [Instalación](#instalación)
-- [Uso](#uso)
-- [Tests](#tests)
-- [Documentación API](#documentación-api)
-- [Contribuir](#contribuir)
-- [Licencia](#licencia)
+![Python](https://img.shields.io/badge/Python-3.12-blue?style=for-the-badge&logo=python)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?style=for-the-badge&logo=mysql)
+![Status](https://img.shields.io/badge/Status-Completed-green?style=for-the-badge)
 
-## Descripción
-Sistema de taxímetro digital desarrollado en Python que permite calcular tarifas de viajes en taxi según diferentes franjas horarias y condiciones especiales.
+Sistema digital avanzado para el cálculo y gestión de tarifas de taxi, diseñado para ofrecer una solución completa tanto para conductores como para la gestión administrativa. El sistema cuenta con dos interfaces: una versión de terminal (CLI) para uso rápido y eficiente, y una interfaz gráfica (GUI) más intuitiva y visual.
 
-## Estado Actual
-### Implementado ✅
-- Sistema base de cálculo de tarifas
-- Gestión de viajes y estados
-- Sistema de logs
-- Interfaz de línea de comandos
-- Refactorización a POO
+Este taxímetro digital no solo calcula tarifas base, sino que también incorpora un sistema dinámico que tiene en cuenta diferentes franjas horarias y condiciones especiales como lluvia o eventos. Además, incluye un sistema de autenticación de usuarios y almacenamiento persistente de datos en MySQL.
 
-### En Desarrollo 🛠️
-- Sistema de autenticación
-- Base de datos MySQL
-- Interfaz gráfica
+</div>
 
-## Tecnologías
-- Python 3.12
-- MySQL
-- pytest para testing
+## ✨ Características
 
-### Dependencias
-- mysql-connector-python: Conexión con base de datos MySQL
-- python-dotenv: Gestión de variables de entorno
-- pytest: Framework de testing
+<table>
+  <tr>
+    <td>🕒 Cálculo de Tarifas</td>
+    <td>👥 Sistema de Usuarios</td>
+    <td>📊 Registro de Viajes</td>
+  </tr>
+  <tr>
+    <td>🌧️ Condiciones Especiales</td>
+    <td>💾 Base de Datos MySQL</td>
+    <td>📝 Sistema de Logs</td>
+  </tr>
+  <tr>
+    <td>🖥️ Interfaz Gráfica</td>
+    <td>⌨️ Interfaz CLI</td>
+    <td>🔐 Autenticación</td>
+  </tr>
+</table>
 
-## Estructura
-```
-taximeter/
-    ├── main.py           # Programa principal
-    ├── config.py         # Configuración de tarifas
-    ├── requirements.txt  # Dependencias
-    ├── tests/           # Tests unitarios
-    ├── logs/            # Registros del sistema
-    ├── history/         # Historial de viajes
-    ├── database/        # Configuración BD
-    └── auth/            # Sistema autenticación
+## 🚀 Iniciar Aplicación
+
+El sistema ofrece dos modos de uso diferentes para adaptarse a las necesidades del usuario:
+
+### CLI (Terminal)
+La interfaz de línea de comandos proporciona un acceso rápido y eficiente a todas las funcionalidades del sistema. Ideal para usuarios experimentados que prefieren un control directo.
+```bash
+python3 main.py
 ```
 
-## Instalación
+### GUI (Interfaz Gráfica)
+La interfaz gráfica ofrece una experiencia más visual e intuitiva, con un diseño moderno y fácil de usar. Perfecta para nuevos usuarios o para quienes prefieren una interacción más visual.
+```bash
+python3 -m gui.gui_main
+```
+
+Ambas interfaces comparten la misma base de datos y funcionalidades, permitiendo una transición fluida entre ellas según las necesidades del momento.
+
+## 💰 Sistema de Tarifas
+
+El sistema implementa un modelo de tarifas dinámico y flexible que se adapta a diferentes situaciones y horarios. Las tarifas se han diseñado considerando los patrones de demanda típicos del servicio de taxi y las necesidades tanto de conductores como de pasajeros.
+
+### Franjas Horarias
+| Horario | Tipo | En Movimiento | Parado |
+|---------|------|---------------|---------|
+| 07-09 | Hora Punta Mañana | 0.06€/s | 0.025€/s |
+| 17-19 | Hora Punta Tarde | 0.06€/s | 0.025€/s |
+| 00-03 | Nocturna | 0.07€/s | 0.03€/s |
+| 10-16 | Valle | 0.035€/s | 0.015€/s |
+| Resto | Normal | 0.04€/s | 0.02€/s |
+
+### Multiplicadores Especiales
+El sistema incorpora multiplicadores para situaciones especiales que afectan al servicio:
+
+- 🌧️ **Lluvia**: x1.2 - Se aplica durante condiciones climatológicas adversas que aumentan la demanda y dificultan el servicio
+- 🎪 **Eventos**: x1.3 - Para situaciones de alta demanda durante eventos especiales como conciertos, eventos deportivos o festivales
+
+Estos multiplicadores se pueden activar y desactivar fácilmente desde ambas interfaces, y se aplican automáticamente a la tarifa base correspondiente.
+
+## 📥 Instalación
+
+### 1. Preparar Entorno
 ```bash
 # Clonar repositorio
 git clone https://github.com/jruizndev/Taximeter.git
+cd Taximeter
+
+# Crear y activar entorno virtual
+python3 -m venv venv
+source venv/bin/activate
 
 # Instalar dependencias
 pip install -r requirements.txt
-
-# Configurar variables de entorno
-cp .env.example .env
-# Editar .env con tus configuraciones
 ```
 
-## Uso
-### Iniciar el programa
+### 2. Base de Datos
+```sql
+CREATE DATABASE taximeter;
+USE taximeter;
+
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_login TIMESTAMP NULL
+);
+
+CREATE INDEX idx_username ON users(username);
+```
+
+### 3. Variables de Entorno
+```env
+DB_HOST=localhost
+DB_USER=tu_usuario
+DB_PASSWORD=tu_contraseña
+DB_NAME=taximeter
+```
+
+## 📁 Estructura del Proyecto
+
+```
+taximeter/
+    ├── auth/
+    │   └── auth.py              # Sistema de autenticación
+    ├── config/
+    │   └── config.py            # Configuración de tarifas
+    ├── database/
+    ├── └── connection.py        # Conexión a la base de datos
+    │   └── schema.sql           # Esquema de la base de datos
+    ├── gui/
+    │   └── frames/
+    │       ├── auth_frame.py    # Interfaz de login
+    │       └── meter_display.py # Display del taxímetro
+    ├── tests/
+    │   └── test_taxi.py         # Tests unitarios
+    ├── .env.example             # Configuración de entorno
+    ├── main.py                  # Punto de entrada CLI
+    ├── README.md                # Documentación
+    └── requirements.txt         # Dependencias
+```
+
+## 🧪 Tests
+
 ```bash
-python main.py
+# Ejecutar tests
+python3 -m pytest -v
+
+# Tests específicos
+python3 -m pytest tests/test_taxi.py -v
 ```
 
-### Funcionalidades principales
-- Iniciar nuevo trayecto
-- Ver tarifas actuales
-- Gestionar condiciones especiales (lluvia, eventos)
-- Consultar historial de viajes
+## 🚀 Próximas Mejoras
 
-### Tarifas
-El sistema maneja diferentes tarifas según:
-- Hora del día (valle, punta, noche)
-- Estado del taxi (movimiento/parado)
-- Condiciones especiales (lluvia, eventos)
+- [ ] Integrar base de datos para histórico de trayectos
+- [ ] Dockerizar la aplicación 
+- [ ] Desarrollar versión web
+- [ ] Implementar sistema de geolocalización GPS
+- [ ] Añadir sistema de cobro y pagos
 
-## Tests
-### Ejecutar tests
-```bash
-npm test
-```
+Estas mejoras se implementarán de forma gradual, priorizando según las necesidades del proyecto.
 
-### Estructura de tests
-- Tests unitarios para cálculo de tarifas
-- Tests para cambios de estado
-- Tests para condiciones especiales
+## 🤝 Contribuir
 
-## Documentación API
-[Esta sección se completará cuando se implemente la API REST]
-
-## Contribuir
-### Cómo contribuir
 1. Fork del repositorio
-2. Crear rama feature (`git checkout -b feature/NuevaCaracteristica`)
-3. Commit cambios (`git commit -m 'feat: add nueva caracteristica'`)
-4. Push a la rama (`git push origin feature/NuevaCaracteristica`)
-5. Crear Pull Request
+2. Crear rama
+```bash
+git checkout -b feature/NuevaMejora
+```
+3. Commit y push
+```bash
+git commit -m "feat: add nueva mejora"
+git push origin feature/NuevaMejora
+```
 
-### Convenciones
-- Seguir estilo PEP 8
-- Documentar funciones y clases
+## 📝 Convenciones
+- Seguir PEP 8
+- Tests para nuevas funcionalidades
+3. Commit y push
+```bash
+git commit -m "feat: add nueva mejora"
+git push origin feature/NuevaMejora
+```
+
+## 📝 Convenciones
+- Seguir PEP 8
+- Tests para nuevas funcionalidades
 - Mantener tests actualizados
