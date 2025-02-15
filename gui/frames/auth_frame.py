@@ -57,7 +57,7 @@ class AuthFrame(ttk.Frame):
         # Título 
         title_label = ttk.Label(
             self, 
-            text="SISTEMA DE TAXÍMETRO",
+            text="TAXÍMETRO PEPE TAXI",
             font=("Arial", 24, "bold")
         )
         title_label.pack(pady=(0, 30))
