@@ -24,7 +24,7 @@ def main():
             ui.manage_special_conditions()
         elif option == "4":
             logging.info("Programa finalizado")
-            print("\n¡Gracias por usar el taxímetro!")
+            print("\n¡Gracias por usar el taxímetro! 😀")
             ui.auth.db.disconnect()  
             break
         else:
