@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 from main import Taximeter, Trip, RateCalculator
-from config import TIME_SLOTS, SPECIAL_CONDITIONS
+from config.config import TIME_SLOTS, SPECIAL_CONDITIONS
 
 class TestTaximeter(unittest.TestCase):
     def setUp(self):
