@@ -1,4 +1,22 @@
-mysql-connector-python==8.2.0
-python-dotenv==1.0.0
+astroid==3.3.8
 bcrypt==4.2.1
+black==25.1.0
+click==8.1.8
+coverage==7.6.12
+dill==0.3.9
+iniconfig==2.0.0
+isort==6.0.0
+mccabe==0.7.0
+mypy-extensions==1.0.0
+mysql-connector-python==9.2.0
+packaging==24.2
+pathspec==0.12.1
+platformdirs==4.3.6
+pluggy==1.5.0
+protobuf==4.21.12
+pylint==3.3.4
 pytest==8.3.4
+pytest-cov==6.0.0
+python-dotenv==1.0.1
+-e git+https://github.com/jruizndev/Taximeter.git@8a75947b13da9d8bf58c9ff78a00af8dcac37b24#egg=taximeter
+tomlkit==0.13.2

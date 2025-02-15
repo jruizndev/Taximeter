@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
-from gui.auth_frame import AuthFrame
-from gui.meter_display import MeterDisplay
+from gui.frames.auth_frame import AuthFrame
+from gui.frames.meter_display import MeterDisplay
 
 class TaxiMeterGUI:
     def __init__(self):

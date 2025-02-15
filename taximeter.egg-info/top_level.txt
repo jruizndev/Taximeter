@@ -1,4 +1,0 @@
-auth
-config
-database
-gui
