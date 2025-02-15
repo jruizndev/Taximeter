@@ -53,7 +53,13 @@ class TaxiUI:
         username = input("👤 Usuario: ")
         password = input("🔒 Contraseña: ")
         password_confirm = input("🔒 Confirmar contraseña: ")
-    
+
+        # Validar campos vacíos
+        if not username or not password or not password_confirm:
+            print("❌ Error: Todos los campos son obligatorios")
+            return False
+        
+        # Validar contraseñas
         if password != password_confirm:
             print("❌ Las contraseñas no coinciden")
             return False
