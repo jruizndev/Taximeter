@@ -131,8 +131,8 @@ taximeter/
    ├── core/
    │   ├── calculator.py        # Cálculo de tarifas
    │   ├── taximeter.py         # Clase principal del taxímetro
-   │   ├── trip.py             # Gestión de viajes
-   │   └── ui.py               # Interfaz de línea de comandos
+   │   ├── trip.py              # Gestión de viajes
+   │   └── ui.py                # Interfaz de línea de comandos
    ├── database/
    │   ├── connection.py        # Conexión a la base de datos
    │   └── schema.sql           # Esquema de la base de datos
