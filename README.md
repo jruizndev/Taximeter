@@ -4,7 +4,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3.12-blue?style=for-the-badge&logo=python)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?style=for-the-badge&logo=mysql)
-![Status](https://img.shields.io/badge/Status-Completed-green?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Open%20to%20Improvements-brightgreen?style=for-the-badge)
 
 Sistema digital avanzado para el cálculo y gestión de tarifas de taxi, diseñado para ofrecer una solución completa tanto para conductores como para la gestión administrativa. El sistema cuenta con dos interfaces: una versión de terminal (CLI) para uso rápido y eficiente, y una interfaz gráfica (GUI) más intuitiva y visual.
 
