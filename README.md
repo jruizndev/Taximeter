@@ -140,6 +140,10 @@ taximeter/
    │   └── frames/
    │       ├── auth_frame.py    # Interfaz de login
    │       └── meter_display.py # Display del taxímetro
+   ├── history/
+   │   └── trips.txt            # Historial de viajes realizados
+   ├── logs/
+   │   └── taximeter.log        # Registros del sistema
    ├── tests/
    │   └── test_taxi.py         # Tests unitarios
    ├── .env.example             # Configuración de entorno
@@ -162,7 +166,7 @@ taximeter/
 
 - **Interfaces Duales**: CLI mejorada visualmente con emojis y GUI desarrollada con Tkinter, ofreciendo dos opciones de uso
 
-- **Gestión de Configuración**: Uso de variables de entorno (.env)
+- **Gestión de Configuración**: Uso de variables de entorno (.env) y sistema de logs para seguimiento
 
 ## 🧪 Tests
 
