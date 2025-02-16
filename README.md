@@ -148,6 +148,22 @@ taximeter/
    └── requirements.txt         # Dependencias
 ```
 
+## 👨‍💻 Buenas Prácticas Aplicadas
+
+- **Programación Orientada a Objetos**: División del proyecto en clases (Taximeter, Trip, RateCalculator) para gestionar diferentes aspectos del sistema
+
+- **Modularidad y Organización**: Código distribuido en módulos independientes (auth, core, gui, database) permitiendo mantener una estructura clara y escalable
+
+- **Trabajo con Ramas**: Desarrollo en ramas específicas para cada funcionalidad, permitiendo un desarrollo paralelo y organizado
+
+- **Control de Versiones**: Commits descriptivos siguiendo convenciones y documentación actualizada
+
+- **Testing**: Implementación de tests unitarios para validar la funcionalidad del cálculo de tarifas
+
+- **Interfaces Duales**: CLI mejorada visualmente con emojis y GUI desarrollada con Tkinter, ofreciendo dos opciones de uso
+
+- **Gestión de Configuración**: Uso de variables de entorno (.env)
+
 ## 🧪 Tests
 
 ```bash
