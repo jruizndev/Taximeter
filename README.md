@@ -172,7 +172,7 @@ taximeter/
 
 ```bash
 # Ejecutar tests
-python3 -m pytest -v
+npm test
 
 # Tests específicos
 python3 -m pytest tests/test_taxi.py -v
